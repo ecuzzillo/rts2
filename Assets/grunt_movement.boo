@@ -14,6 +14,7 @@ class grunt_movement(MonoBehaviour):
         pass
 
     def FixedUpdate():
+        Debug.Log(transform.position)
         if Input.GetButtonDown("Fire1"):
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
             
@@ -35,10 +36,11 @@ class grunt_movement(MonoBehaviour):
         transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
-        Debug.Log("Clicked")
+        Debug.Log("Trigger stay")
         if Input.GetButtonDown("Fire1"):
             sel_mgr as selection_manager = FindObjectOfType(selection_manager)
             sel_mgr.HandleObjectClick(self)
 
     def OnTriggerEnter2D(other as Collider2D):
+        Debug.Log("Trigger enter")
         OnTriggerStay2D(other)
