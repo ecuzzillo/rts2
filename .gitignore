@@ -37,3 +37,5 @@ Thumbs.db
 # VIM stuff #
 # ========= #
 *.swp
+*.vim
+*.vim.meta
