@@ -5,6 +5,7 @@ Temp/
 Obj/
 UnityGenerated/
 Library/
+ProjectSettings/QualitySettings.asset
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -31,3 +32,8 @@ ExportedObj/
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# ========= #
+# VIM stuff #
+# ========= #
+*.swp
