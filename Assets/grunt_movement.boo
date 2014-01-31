@@ -7,7 +7,7 @@ class grunt_movement(MonoBehaviour):
     public is_selected as bool
 
     def Start():
-        target = Vector3(0,0,0)
+        target = transform.position
         the_doonk = GameObject("garbage")
     
     def Update():
@@ -33,3 +33,12 @@ class grunt_movement(MonoBehaviour):
 
         transform.position += vel
         transform.position.z = 0
+
+    def OnTriggerStay2D(other as Collider2D):
+        Debug.Log("Clicked")
+        if Input.GetButtonDown("Fire1"):
+            sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+            sel_mgr.HandleObjectClick(self)
+
+    def OnTriggerEnter2D(other as Collider2D):
+        OnTriggerStay2D(other)
