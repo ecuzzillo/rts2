@@ -14,7 +14,8 @@ class grunt_movement(MonoBehaviour):
         pass
 
     def FixedUpdate():
-        if Input.GetButtonDown("Fire1"):
+        sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+        if Input.GetButtonDown("Fire2") and self in sel_mgr.GetSelectedObjects():
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
 
             Destroy(the_doonk)
