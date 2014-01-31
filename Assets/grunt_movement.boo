@@ -9,20 +9,18 @@ class grunt_movement(MonoBehaviour):
     def Start():
         target = transform.position
         the_doonk = GameObject("garbage")
-    
+
     def Update():
         pass
 
     def FixedUpdate():
         if Input.GetButtonDown("Fire1"):
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
-            
+
             Destroy(the_doonk)
             target.z = 0
             the_doonk = Instantiate(Resources.Load("block_obj"), target, Quaternion.identity)
 
-            
-            
         diff = target - transform.position
 
         mag = diff.magnitude
@@ -35,7 +33,6 @@ class grunt_movement(MonoBehaviour):
         transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
-        Debug.Log("Clicked")
         if Input.GetButtonDown("Fire1"):
             sel_mgr as selection_manager = FindObjectOfType(selection_manager)
             sel_mgr.HandleObjectClick(self)
