@@ -4,6 +4,7 @@ class grunt_movement(MonoBehaviour):
     public vel as Vector3
     public target as Vector3
     public the_doonk as GameObject
+    public is_selected as bool
 
     def Start():
         target = Vector3(0,0,0)
@@ -15,9 +16,12 @@ class grunt_movement(MonoBehaviour):
     def FixedUpdate():
         if Input.GetButtonDown("Fire1"):
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            
             Destroy(the_doonk)
             target.z = 0
             the_doonk = Instantiate(Resources.Load("block_obj"), target, Quaternion.identity)
+
+            
             
         diff = target - transform.position
 
@@ -29,6 +33,3 @@ class grunt_movement(MonoBehaviour):
 
         transform.position += vel
         transform.position.z = 0
-        
-
- 

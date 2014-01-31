@@ -118,6 +118,56 @@ Prefab:
   m_RootGameObject: {fileID: 1567114312}
   m_IsPrefabParent: 0
   m_IsExploded: 1
+--- !u!1 &1396638576
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1396638579}
+  - 114: {fileID: 1396638578}
+  - 58: {fileID: 1396638577}
+  m_Layer: 0
+  m_Name: mouse_obj
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!58 &1396638577
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1396638576}
+  m_Enabled: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Radius: 9.99999975e-05
+  m_Center: {x: 0, y: 0}
+--- !u!114 &1396638578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1396638576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0405956bc3e4ababa93668459212c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1396638579
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1396638576}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
 --- !u!1 &1567114312
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,6 +202,7 @@ MonoBehaviour:
   vel: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   the_doonk: {fileID: 0}
+  is_selected: 0
 --- !u!212 &1567114314
 SpriteRenderer:
   m_ObjectHideFlags: 0
