@@ -6,9 +6,7 @@ class selection_manager(MonoBehaviour):
     def Start():
         selected = []
 
-    def HandleObjectClick(obj as MonoBehaviour):
+    def handle_click(obj as MonoBehaviour):
         selected = []
+        Debug.Log(obj)
         selected.Add(obj)
-
-    def GetSelectedObjects():
-        return selected
