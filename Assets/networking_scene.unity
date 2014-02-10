@@ -157,6 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12d95956b6a074bb5ac24a44257ddbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  max_force: 0
 --- !u!1001 &952664879
 Prefab:
   m_ObjectHideFlags: 0
@@ -717,6 +718,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc8174d7b47794a9598138caac476186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  game_name: 
+  btn_x: 0
+  btn_y: 0
+  btn_w: 0
+  btn_h: 0
 --- !u!4 &2036132507
 Transform:
   m_ObjectHideFlags: 0
