@@ -13,8 +13,9 @@ class network_manager_script(MonoBehaviour):
         btn_h = Screen.width * 0.1
 	
     def OnGUI():
-        if GUI.Button(Rect(btn_x, btn_y, btn_w, btn_h), "Start Server"):
-            Debug.Log("Starting Server")
+        Debug.Log(self.btn_x)
+        #if GUI.Button(Rect(btn_x, btn_y, btn_w, btn_h), "Start Server"):
+        #    Debug.Log("Starting Server")
 
-        if GUI.Button(Rect(btn_x, btn_y * 1.2 + btn_h, btn_w, btn_h), "Refresh Hosts"):
-            Debug.Log("Refreshing")
+        #if GUI.Button(Rect(btn_x, btn_y * 1.2 + btn_h, btn_w, btn_h), "Refresh Hosts"):
+        #    Debug.Log("Refreshing")
