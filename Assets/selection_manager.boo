@@ -12,7 +12,8 @@ class selection_manager(MonoBehaviour):
 
     def FixedUpdate():
         #for i in range(len(connector_objs)):
-        if len(selected) > 0:
+        #if len(selected) > 0:
+        if false:
             obji = (selected[0] cast draggable_part)#(connector_objs[i] cast draggable_part)
             for j in range(len(obji.connectors)):
                 closest_ind = -1

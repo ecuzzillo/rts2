@@ -256,6 +256,7 @@ GameObject:
   - 111: {fileID: 1089071386}
   - 58: {fileID: 1089071385}
   - 50: {fileID: 1089071384}
+  - 148: {fileID: 1089071391}
   m_Layer: 0
   m_Name: grunt_obj
   m_TagString: Untagged
@@ -370,6 +371,18 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!148 &1089071391
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1089071383}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1089071390}
+  m_ViewID:
+    m_ID: 1
+    m_Type: 1
 --- !u!1001 &1379629720
 Prefab:
   m_ObjectHideFlags: 0
@@ -497,6 +510,7 @@ GameObject:
   - 111: {fileID: 1567114316}
   - 58: {fileID: 1567114318}
   - 50: {fileID: 1567114319}
+  - 148: {fileID: 1567114320}
   m_Layer: 0
   m_Name: grunt_obj
   m_TagString: Untagged
@@ -611,6 +625,18 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
+--- !u!148 &1567114320
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1567114312}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1567114315}
+  m_ViewID:
+    m_ID: 2
+    m_Type: 1
 --- !u!1 &1856416066
 GameObject:
   m_ObjectHideFlags: 0
