@@ -39,3 +39,8 @@ Thumbs.db
 *.swp
 *.vim
 *.vim.meta
+
+# ====== #
+# Builds #
+# ====== #
+TestBuild.app

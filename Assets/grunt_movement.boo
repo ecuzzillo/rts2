@@ -6,6 +6,12 @@ class grunt_movement(MonoBehaviour):
     public the_doonk as GameObject
     public sel_mgr as selection_manager
 
+    def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
+        if stream.isWriting:
+            stream.Serialize(target)
+        else:
+            stream.Serialize(target)
+
     def Start():
         target = transform.position
         the_doonk = GameObject("garbage")
