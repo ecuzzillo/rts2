@@ -7,10 +7,13 @@ class grunt_movement(MonoBehaviour):
     public sel_mgr as selection_manager
 
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
+        targ as Vector3
         if stream.isWriting:
-            stream.Serialize(target)
+            targ = target
+            stream.Serialize(targ)
         else:
-            stream.Serialize(target)
+            stream.Serialize(targ)
+            target = targ
 
 
     def Start():
