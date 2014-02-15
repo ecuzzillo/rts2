@@ -12,6 +12,7 @@ class grunt_movement(MonoBehaviour):
         else:
             stream.Serialize(target)
 
+
     def Start():
         target = transform.position
         the_doonk = GameObject("garbage")
