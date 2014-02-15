@@ -749,6 +749,7 @@ MonoBehaviour:
   btn_y: 0
   btn_w: 0
   btn_h: 0
+  refreshing: 0
 --- !u!4 &2036132507
 Transform:
   m_ObjectHideFlags: 0
