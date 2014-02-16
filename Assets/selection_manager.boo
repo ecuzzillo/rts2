@@ -4,11 +4,16 @@ class selection_manager(MonoBehaviour):
     public selected as List
     public connector_objs as List
     public max_force as double
+    public owned as Hash
 
     def Start():
         connector_objs = []
         selected = []
         max_force = 4.0
+        owned = {}
+
+    def register_owned(obj as Object):
+        owned[obj.GetInstanceID()] = true
 
     def FixedUpdate():
         #for i in range(len(connector_objs)):
@@ -51,12 +56,14 @@ class selection_manager(MonoBehaviour):
                             AddForceAtPosition(force_mag*((jpos - closest_pos).normalized), 
                                                closest_pos)
 
-                
-                    
-                
-                
-
-    def handle_click(obj as MonoBehaviour):
+    def handle_click(obj as GameObject):
         selected = []
-        Debug.Log(obj)
-        selected.Add(obj)
+        Debug.Log(obj.GetInstanceID())
+        hash_str = "{\n"
+        for key in owned.Keys:
+            hash_str += "$(key): $(owned[key])\n"
+        hash_str += "}\n"
+        Debug.Log(hash_str)
+        if owned.ContainsKey(obj.GetInstanceID()):
+            Debug.Log("Owned")
+            selected.Add(obj)

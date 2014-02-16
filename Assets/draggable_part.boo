@@ -31,7 +31,7 @@ class draggable_part(MonoBehaviour):
 
     def OnTriggerStay2D(other as Collider2D):
         if not mouse_down and Input.GetMouseButton(0) and len(sel_mgr.selected) == 0:
-            sel_mgr.handle_click(self)
+            sel_mgr.handle_click(gameObject)
             mouse_down = true
 
         elif mouse_down and not Input.GetMouseButton(0):

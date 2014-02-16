@@ -22,7 +22,7 @@ class grunt_movement(MonoBehaviour):
         sel_mgr = FindObjectOfType(selection_manager)
 
     def Update():
-        if Input.GetMouseButtonDown(1) and self in sel_mgr.selected:
+        if Input.GetMouseButtonDown(1) and gameObject in sel_mgr.selected:
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
             Debug.Log("before destruction, the_doonk's name was"+the_doonk.name)
             Destroy(the_doonk)
@@ -51,7 +51,7 @@ class grunt_movement(MonoBehaviour):
     def OnTriggerStay2D(other as Collider2D):
         if Input.GetMouseButtonDown(0):
             sel_mgr as selection_manager = FindObjectOfType(selection_manager)
-            sel_mgr.handle_click(self)
+            sel_mgr.handle_click(gameObject)
 
     def OnTriggerEnter2D(other as Collider2D):
         Debug.Log("Trigger enter")

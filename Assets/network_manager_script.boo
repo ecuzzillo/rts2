@@ -22,6 +22,14 @@ class network_manager_script(MonoBehaviour):
     def start_server():
         Network.InitializeServer(32, 25001, (not Network.HavePublicAddress()))
         MasterServer.RegisterHost(game_name, "RTS Game", "whateva")
+        pos as Vector3
+        pos.x = -2
+        pos.y = 0
+        pos.z = 0
+        obj = Network.Instantiate(Resources.Load("grunt"), pos, Quaternion.identity, 0)
+        Debug.Log(obj.GetInstanceID())
+        sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+        sel_mgr.register_owned(obj)
 
     def refresh_host_list():
         MasterServer.RequestHostList(game_name)
@@ -42,6 +50,18 @@ class network_manager_script(MonoBehaviour):
                 for i in range(0, host_data.Length):
                     if GUI.Button(Rect(btn_x*2 + btn_w, btn_y*1.2 + btn_h*i, btn_w*3, btn_h), host_data[i].gameName):
                         Network.Connect(host_data[i])
+                        StartCoroutine("create_grunt")
+
+    def create_grunt() as IEnumerator:
+        yield WaitForSeconds(1)
+        pos as Vector3
+        pos.x = 2
+        pos.y = 0
+        pos.z = 0
+        obj = Network.Instantiate(Resources.Load("grunt"), pos, Quaternion.identity, 0)
+        sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+        sel_mgr.register_owned(obj)
+
 
     def OnMasterServerEvent(mse as MasterServerEvent):
         if mse == MasterServerEvent.RegistrationSucceeded:
