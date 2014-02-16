@@ -2,20 +2,24 @@
 
 class draggable_part(MonoBehaviour):
     public mouse_down as bool
-    public sel_mgr as selection_manager
+    public sel_mgr as draggable_selection_manager
     public connectors as List
     public inited as bool
 
-    def Start():
-        sel_mgr = FindObjectOfType(selection_manager)
+    virtual def Start():
+        sel_mgr = FindObjectOfType(draggable_selection_manager)
         mouse_down = false
         inited = false
-        s = (renderer as SpriteRenderer).sprite.bounds.size
-        (collider2D cast BoxCollider2D).size = s
-        connectors = [Vector3(s.x/2, 0,0), Vector3(-s.x/2, 0,0)]
 
     def Update():
         if not inited:
+            s = (renderer as SpriteRenderer).sprite.bounds.size
+            (collider2D cast BoxCollider2D).size = s
+            connectors = [[Vector3(s.x/2, 0,0), 
+                           Vector3(1,0,0)], 
+                          [Vector3(-s.x/2, 0,0),
+                           Vector3(-1,0,0)]]
+
             sel_mgr.connector_objs.Add(self)
             inited = true
 
