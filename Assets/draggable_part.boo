@@ -16,7 +16,7 @@ class draggable_part(MonoBehaviour):
             s = (renderer as SpriteRenderer).sprite.bounds.size
             (collider2D cast BoxCollider2D).size = s
             connectors = [[Vector3(s.x/2, 0,0), 
-                           Vector3(1,0,0)], 
+                           Vector3(1,1,0)], 
                           [Vector3(-s.x/2, 0,0),
                            Vector3(-1,0,0)]]
 
@@ -31,6 +31,9 @@ class draggable_part(MonoBehaviour):
                 transform.Rotate(Vector3(0,0,90))
             if Input.GetKeyDown("left"):
                 transform.Rotate(Vector3(0,0,-90))
+
+    def FixedUpdate():
+        rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
             
 
     def OnTriggerStay2D(other as Collider2D):
