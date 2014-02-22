@@ -2,7 +2,7 @@
 
 #public sm as selection_manager
 
-class draggable_selection_manager(selection_manager): 
+class draggable_selection_manager(MonoBehaviour): 
     public connector_objs as List
     public max_force as double
     public this_held as bool
@@ -10,13 +10,18 @@ class draggable_selection_manager(selection_manager):
     public prev_closest_info as List
     public prev_selected as draggable_part
     public close_enough as bool
+    public selected as List
 
-    override def Start():
-        super()
+    def Start():
+        selected = []
         connector_objs = []
         max_force = 4.0
         prev_held = false
         this_held = false
+
+    def handle_click(obj as draggable_part):
+        selected = []
+        selected.Add(obj)
 
     def FixedUpdate():
         prev_held = this_held

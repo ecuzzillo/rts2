@@ -5,11 +5,13 @@ class draggable_part(MonoBehaviour):
     public sel_mgr as draggable_selection_manager
     public connectors as List
     public inited as bool
+    public mouse_coll as Collider2D
 
     virtual def Start():
         sel_mgr = FindObjectOfType(draggable_selection_manager)
         mouse_down = false
         inited = false
+        mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
     def Update():
         if not inited:
@@ -35,16 +37,15 @@ class draggable_part(MonoBehaviour):
     def FixedUpdate():
         rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
             
-
     def OnTriggerStay2D(other as Collider2D):
-        if not mouse_down and Input.GetMouseButton(0) and len(sel_mgr.selected) == 0:
-            sel_mgr.handle_click(gameObject)
-            mouse_down = true
+        if other == mouse_coll:
+            if not mouse_down and Input.GetMouseButton(0) and len(sel_mgr.selected) == 0:
+                sel_mgr.handle_click(self)
+                mouse_down = true
 
-        elif mouse_down and not Input.GetMouseButton(0):
-            sel_mgr.selected = []
-            mouse_down = false
-
+            elif mouse_down and not Input.GetMouseButton(0):
+                sel_mgr.selected = []
+                mouse_down = false
             
     def OnTriggerEnter2D(other as Collider2D):
         OnTriggerStay2D(other)

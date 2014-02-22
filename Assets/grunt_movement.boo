@@ -5,6 +5,7 @@ class grunt_movement(MonoBehaviour):
     public target as Vector3
     public the_doonk as GameObject
     public sel_mgr as selection_manager
+    public mouse_coll as Collider2D
 
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
         targ as Vector3
@@ -20,6 +21,7 @@ class grunt_movement(MonoBehaviour):
         target = transform.position
         the_doonk = GameObject("garbage")
         sel_mgr = FindObjectOfType(selection_manager)
+        mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
     def Update():
         if Input.GetMouseButtonDown(1) and gameObject in sel_mgr.selected:
@@ -49,7 +51,7 @@ class grunt_movement(MonoBehaviour):
         transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
-        if Input.GetMouseButtonDown(0):
+        if Input.GetMouseButtonDown(0) and other == mouse_coll:
             sel_mgr as selection_manager = FindObjectOfType(selection_manager)
             sel_mgr.handle_click(gameObject)
 
