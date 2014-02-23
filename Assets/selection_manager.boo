@@ -2,10 +2,12 @@ import UnityEngine
 
 class selection_manager(MonoBehaviour):
     public selected as List
+    public selectednesses as List
     public owned as Hash
 
     virtual def Start():
         selected = []
+        selectednesses = []
         owned = {}
 
     def register_owned(obj as Object):
@@ -13,12 +15,19 @@ class selection_manager(MonoBehaviour):
 
     def handle_click(obj as GameObject):
         selected = []
-        Debug.Log(obj.GetInstanceID())
         hash_str = "{\n"
         for key in owned.Keys:
             hash_str += "$(key): $(owned[key])\n"
         hash_str += "}\n"
-        Debug.Log(hash_str)
         if owned.ContainsKey(obj.GetInstanceID()):
-            Debug.Log("Owned")
             selected.Add(obj)
+
+            for s in selectednesses:
+                Destroy(s)
+            selectednesses = []
+            the_obj = Instantiate(Resources.Load("selectedness_obj"), 
+                                  obj.transform.position, 
+                                  Quaternion.identity)
+            (the_obj cast GameObject).GetComponent[of selectedness_obj]().\
+                game_object = obj.gameObject
+            selectednesses.Add(the_obj)

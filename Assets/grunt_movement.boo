@@ -16,7 +16,6 @@ class grunt_movement(MonoBehaviour):
             stream.Serialize(targ)
             target = targ
 
-
     def Start():
         target = transform.position
         the_doonk = GameObject("garbage")
@@ -24,7 +23,9 @@ class grunt_movement(MonoBehaviour):
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
     def Update():
-        if Input.GetMouseButtonDown(1) and gameObject in sel_mgr.selected:
+        Debug.Log("1 "+Input.GetMouseButton(1))
+        Debug.Log(gameObject in sel_mgr.selected)
+        if Input.GetMouseButton(1) and gameObject in sel_mgr.selected:
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
             Debug.Log("before destruction, the_doonk's name was"+the_doonk.name)
             Destroy(the_doonk)
@@ -49,10 +50,8 @@ class grunt_movement(MonoBehaviour):
         transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
-        if Input.GetMouseButtonDown(0) and other == mouse_coll:
-            sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+        if Input.GetMouseButton(0) and other == mouse_coll:
             sel_mgr.handle_click(gameObject)
 
     def OnTriggerEnter2D(other as Collider2D):
-        Debug.Log("Trigger enter")
         OnTriggerStay2D(other)

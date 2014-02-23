@@ -6,14 +6,19 @@ class sp_manager(MonoBehaviour):
     npc_grunts as List
     def Start():
         sel_mgr = FindObjectOfType(selection_manager)
+        player_grunts = []
+        npc_grunts = []
 
         for i in range(5):
             player_grunts.Add(Instantiate(Resources.Load("grunt"), 
-                                          Vector3(i*2-5, -4, 0), 
+                                          Vector3(i*15-40, -8, 0), 
                                           Quaternion.identity))
-            sel_mgr.register_owned(player_grunts[-1])
+            Debug.Log(i)
+            Debug.Log(len(player_grunts))
+            Debug.Log(player_grunts[i])
+            sel_mgr.register_owned(player_grunts[i])
             npc_grunts.Add(Instantiate(Resources.Load("grunt"), 
-                                          Vector3(i*2-5, 4, 0), 
+                                          Vector3(i*15-40, 8, 0), 
                                           Quaternion.identity))
             
                               
