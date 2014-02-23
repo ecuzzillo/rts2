@@ -32,7 +32,6 @@ class draggable_selection_manager(MonoBehaviour):
                               Quaternion.identity)
         (the_obj cast GameObject).GetComponent[of selectedness_obj]().game_object = obj.gameObject
         selectednesses.Add(the_obj)
-        
 
     def FixedUpdate():
         prev_held = this_held

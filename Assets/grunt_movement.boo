@@ -23,16 +23,12 @@ class grunt_movement(MonoBehaviour):
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
     def Update():
-        Debug.Log("1 "+Input.GetMouseButton(1))
-        Debug.Log(gameObject in sel_mgr.selected)
         if Input.GetMouseButton(1) and gameObject in sel_mgr.selected:
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
-            Debug.Log("before destruction, the_doonk's name was"+the_doonk.name)
             Destroy(the_doonk)
 
             target.z = 0
             the_doonk = Instantiate(Resources.Load("doonk"), target, Quaternion.identity)
-            Debug.Log("after instantiation, the_doonk's name was"+the_doonk.name)
 
     def FixedUpdate():
         diff = target - transform.position
