@@ -216,6 +216,7 @@ MonoBehaviour:
   mouse_down: 0
   sel_mgr: {fileID: 0}
   inited: 0
+  mouse_coll: {fileID: 0}
 --- !u!212 &487919988
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -465,6 +466,7 @@ MonoBehaviour:
   mouse_down: 0
   sel_mgr: {fileID: 0}
   inited: 0
+  mouse_coll: {fileID: 0}
 --- !u!212 &1039248302
 SpriteRenderer:
   m_ObjectHideFlags: 0
