@@ -33,9 +33,7 @@ class grunt_movement(MonoBehaviour):
             the_doonk = Instantiate(Resources.Load("doonk"), target, Quaternion.identity)
             Debug.Log("after instantiation, the_doonk's name was"+the_doonk.name)
 
-
     def FixedUpdate():
-
         diff = target - transform.position
         mag = diff.magnitude
         size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x

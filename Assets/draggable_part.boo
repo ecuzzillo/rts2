@@ -36,10 +36,11 @@ class draggable_part(MonoBehaviour):
 
     def FixedUpdate():
         rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
+        rigidbody2D.AddForce(-rigidbody2D.velocity*2)
             
     def OnTriggerStay2D(other as Collider2D):
         if other == mouse_coll:
-            if not mouse_down and Input.GetMouseButton(0) and len(sel_mgr.selected) == 0:
+            if not mouse_down and Input.GetMouseButtonDown(0) and len(sel_mgr.selected) == 0:
                 sel_mgr.handle_click(self)
                 mouse_down = true
 

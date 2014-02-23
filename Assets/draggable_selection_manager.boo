@@ -11,9 +11,11 @@ class draggable_selection_manager(MonoBehaviour):
     public prev_selected as draggable_part
     public close_enough as bool
     public selected as List
+    public selectednesses as List
 
     def Start():
         selected = []
+        selectednesses = []
         connector_objs = []
         max_force = 4.0
         prev_held = false
@@ -21,7 +23,14 @@ class draggable_selection_manager(MonoBehaviour):
 
     def handle_click(obj as draggable_part):
         selected = []
+        for s in selectednesses:
+            Destroy(s)
+        selectednesses = []
         selected.Add(obj)
+        Instantiate(Resources.Load("selectedness_obj"), 
+                    obj.transform.position, 
+                    Quaternion.identity)
+        
 
     def FixedUpdate():
         prev_held = this_held
@@ -68,13 +77,13 @@ class draggable_selection_manager(MonoBehaviour):
                                          closest_cntr_ind, 
                                          closest_ind, 
                                          closest_subind]
-                    if 0:
-                        (connector_objs[closest_ind] cast draggable_part).rigidbody2D.\
-                            AddForceAtPosition(force_mag*((jpos - closest_pos).normalized), 
-                                               closest_pos)
                     close_enough = true
+                    break
                 else:
                     close_enough = false
+                    prev_closest_info = [0, -1, -1, -1]
+                    
+                    
 
             prev_selected = obji
 
@@ -84,28 +93,30 @@ class draggable_selection_manager(MonoBehaviour):
             closest_cntr_ind = prev_closest_info[1]
             closest_ind = prev_closest_info[2]
             closest_subind = prev_closest_info[3]
-            
-            close_obj = (connector_objs[closest_ind] cast draggable_part)
 
-            Debug.Log(prev_selected)
-            Debug.Log(prev_selected.connectors)
-            Debug.Log(closest_cntr_ind)
-            Debug.Log(prev_selected.connectors[closest_cntr_ind])
-            Debug.Log(prev_selected.connectors[closest_cntr_ind] cast List)
-            our_connector = (prev_selected.connectors[closest_cntr_ind]
-                                              cast List)
-            other_connector = (close_obj.connectors[closest_subind] cast List)
+            if closest_ind != -1:
 
-            prev_selected.transform.rotation \
-                = (close_obj.transform.rotation * 
-                   Quaternion.FromToRotation(-(other_connector[1] cast Vector3),
-                                             (our_connector[1] cast Vector3)))
-            prev_selected.transform.position \
-                = (close_obj.transform.TransformPoint(other_connector[0]) 
-                   - prev_selected.transform.rotation * (our_connector[0] cast Vector3))
-            
-            prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
-            prev_selected.rigidbody2D.angularVelocity = 0
+                close_obj = (connector_objs[closest_ind] cast draggable_part)
+
+                Debug.Log(prev_selected)
+                Debug.Log(prev_selected.connectors)
+                Debug.Log(closest_cntr_ind)
+                Debug.Log(prev_selected.connectors[closest_cntr_ind])
+                Debug.Log(prev_selected.connectors[closest_cntr_ind] cast List)
+                our_connector = (prev_selected.connectors[closest_cntr_ind]
+                                                  cast List)
+                other_connector = (close_obj.connectors[closest_subind] cast List)
+
+                prev_selected.transform.rotation \
+                    = (close_obj.transform.rotation * 
+                       Quaternion.FromToRotation(-(other_connector[1] cast Vector3),
+                                                 (our_connector[1] cast Vector3)))
+                prev_selected.transform.position \
+                    = (close_obj.transform.TransformPoint(other_connector[0]) 
+                       - prev_selected.transform.rotation * (our_connector[0] cast Vector3))
+
+                prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
+                prev_selected.rigidbody2D.angularVelocity = 0
             
 
                                                              
