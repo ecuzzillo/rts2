@@ -27,9 +27,11 @@ class draggable_selection_manager(MonoBehaviour):
             Destroy(s)
         selectednesses = []
         selected.Add(obj)
-        Instantiate(Resources.Load("selectedness_obj"), 
-                    obj.transform.position, 
-                    Quaternion.identity)
+        the_obj = Instantiate(Resources.Load("selectedness_obj"), 
+                              obj.transform.position, 
+                              Quaternion.identity)
+        (the_obj cast GameObject).GetComponent[of selectedness_obj]().game_object = obj.gameObject
+        selectednesses.Add(the_obj)
         
 
     def FixedUpdate():
