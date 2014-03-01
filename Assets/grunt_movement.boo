@@ -6,7 +6,17 @@ class grunt_movement(MonoBehaviour):
     public the_doonk as GameObject
     public sel_mgr as selection_manager
     public mouse_coll as Collider2D
+    public is_core as bool
 
+    def constructor():
+        is_core = true
+
+    def get_parent() as grunt_movement:
+        if transform.parent == null:
+            return self
+        else:
+            return transform.parent.gameObject.GetComponent[of grunt_movement]().get_parent()
+    
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
         targ as Vector3
         if stream.isWriting:

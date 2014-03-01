@@ -21,7 +21,7 @@ class draggable_selection_manager(MonoBehaviour):
         prev_held = false
         this_held = false
 
-    def make_sprite(name as String):
+    def make_sprite(name as string):
         bloo = Instantiate(Resources.Load(name),
                            Vector3(0,0,0),
                            Quaternion.identity) cast Texture2D
@@ -73,16 +73,42 @@ class draggable_selection_manager(MonoBehaviour):
         dp.inited = false
         dp.is_core = true
 
+    def make_grunt_tree(dp as draggable_part, 
+                        sel_mgr as selection_manager) as grunt_movement:
+        new_grunt = (Instantiate(Resources.Load("grunt"), 
+                                dp.transform.position, 
+                                dp.transform.rotation) 
+                     cast GameObject).GetComponent[of grunt_movement]()
+        (new_grunt.renderer cast SpriteRenderer).sprite = (dp.renderer cast SpriteRenderer).sprite
+        new_grunt.is_core = dp.is_core
+        sel_mgr.register_owned(new_grunt.gameObject)
+        for child as Transform in dp.transform:
+            child_grunt = make_grunt_tree(child.gameObject.GetComponent[of draggable_part](),
+                                          sel_mgr)
+            child_grunt.transform.parent = new_grunt.transform
+
+        Destroy(dp)
+
+        return new_grunt
+
     def Update():
         if Input.GetKeyDown("c"):
             make_core()
         if Input.GetKeyDown("g"):
+            sel_mgr = (Instantiate(Resources.Load("selection_manager_obj"),
+                                   Vector3(0,0,0),
+                                   Quaternion.identity) 
+                       cast GameObject).GetComponent[of selection_manager]()
+
             for i in range(len(connector_objs)):
                 c = (connector_objs[i] cast draggable_part)
+
                 if c.is_core:
-                    new_grunt = Instantiate(Resource.Load("
+                    grunt = make_grunt_tree(c, sel_mgr)
 
                 
+
+            Destroy(self)
 
     def FixedUpdate():
         prev_held = this_held

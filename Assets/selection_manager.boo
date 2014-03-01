@@ -67,7 +67,7 @@ class selection_manager(MonoBehaviour):
             hash_str += "$(key): $(owned[key])\n"
         hash_str += "}\n"
         if owned.ContainsKey(obj.GetInstanceID()):
-            selected.Add(obj)
+            selected.Add(obj.GetComponent[of grunt_movement]().get_parent())
             Debug.Log("selected len " + len(selected))
 
             the_obj = Instantiate(Resources.Load("selectedness_obj"), 
