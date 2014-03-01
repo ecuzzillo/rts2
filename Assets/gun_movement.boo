@@ -11,7 +11,8 @@ class gun_movement(grunt_movement):
         cooldown_timer = 0
         gun_target = null
 
-    def FixedUpdate():
+    override def FixedUpdate():
+        super.FixedUpdate()
         if cooling_down:
             cooldown_timer -= 1
             if cooldown_timer == 0:
@@ -20,6 +21,6 @@ class gun_movement(grunt_movement):
             fire()
 
     def fire():
-        # Instantiate bullet
+        # Instantiate bullet in direction of enemy
         cooling_down = true
         cooldown_timer = GUN_COOLDOWN

@@ -30,11 +30,11 @@ class grunt_movement(MonoBehaviour):
             target.z = 0
             the_doonk = Instantiate(Resources.Load("doonk"), target, Quaternion.identity)
 
-    def FixedUpdate():
+    virtual def FixedUpdate():
         diff = target - transform.position
         mag = diff.magnitude
         size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x
-        
+
         if mag < size_ish and the_doonk.name.IndexOf("doonk") != -1:
             Destroy(the_doonk)
             the_doonk = GameObject("garbage")
