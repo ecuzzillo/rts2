@@ -5,13 +5,14 @@ class selection_manager(MonoBehaviour):
     public selectednesses as List
     public owned as Hash
     public dragging  as bool
-    public selection_topleft as Vector2
-    public selection_botright
+    public selection_topleft as Vector3
+    public selection_botright as Vector3
 
     virtual def Start():
         selected = []
         selectednesses = []
         dragging = false
+        transform.position = Vector3(-100,-100,0)
         
         owned = {}
 
@@ -24,25 +25,37 @@ class selection_manager(MonoBehaviour):
             selection_botright = Camera.main.ScreenToWorldPoint(Input.mousePosition)
         else:
             if dragging:
-                (collider2D cast BoxCollider2D).center \
-                    = Vector2((selection_topleft + selection_botright)/2)
+                # (collider2D cast BoxCollider2D).center \
+                transform.position \
+                    = (selection_topleft + selection_botright)/2
                 (collider2D cast BoxCollider2D).size \
-                    = Vector2(selection_botright - selection_botleft)
+                    = selection_botright - selection_topleft
                 # backwards because coords positive is up and right, 
                 # but intuition for dragging is down and right
                 (collider2D cast BoxCollider2D).size.y *= -1 
 
                 dragging = false
 
+                for s in selectednesses:
+                    Destroy(s)
+
+                selected = []
+                selectednesses = []
+
+
     def OnTriggerEnter2D(c as Collider2D):
-        handle_click(c.gameObject, False)
-        (collider2D cast BoxCollider2D).size = Vector2(0,0)
+        Debug.Log("calling handle click from trigger")
+        handle_click(c.gameObject, false)
+    
+    def OnTriggerStay2D(c as Collider2D):
+        transform.position = Vector3(-100,-100,0)
+        (collider2D cast BoxCollider2D).size = Vector2(0.0001,0.0001)
 
     def register_owned(obj as Object):
         owned[obj.GetInstanceID()] = true
 
     def handle_click(obj as GameObject):
-        handle_click(obj, True)
+        handle_click(obj, true)
 
     def handle_click(obj as GameObject, reset as bool):
         if reset:
@@ -53,10 +66,8 @@ class selection_manager(MonoBehaviour):
         hash_str += "}\n"
         if owned.ContainsKey(obj.GetInstanceID()):
             selected.Add(obj)
+            Debug.Log("selected len " + len(selected))
 
-            for s in selectednesses:
-                Destroy(s)
-            selectednesses = []
             the_obj = Instantiate(Resources.Load("selectedness_obj"), 
                                   obj.transform.position, 
                                   Quaternion.identity)

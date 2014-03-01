@@ -46,7 +46,8 @@ class grunt_movement(MonoBehaviour):
         transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
-        if Input.GetMouseButton(0) and other == mouse_coll:
+        if Input.GetMouseButtonDown(0) and other == mouse_coll:
+            Debug.Log("calling handle click from grunt")
             sel_mgr.handle_click(gameObject)
 
     def OnTriggerEnter2D(other as Collider2D):

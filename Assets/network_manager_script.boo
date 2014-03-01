@@ -1,5 +1,4 @@
 ﻿import UnityEngine
-import System.Collections
 
 class network_manager_script(MonoBehaviour):
     public game_name as string

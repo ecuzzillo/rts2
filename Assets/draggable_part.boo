@@ -6,22 +6,29 @@ class draggable_part(MonoBehaviour):
     public connectors as List
     public inited as bool
     public mouse_coll as Collider2D
+    public is_core as bool
 
+    def constructor():
+        is_core = false
+        connectors = [[Vector3(0.5,0,0),
+                       Vector3(1,0,0)],
+                      [Vector3(-0.5,0,0),
+                       Vector3(-1, 1, 0)]]
     virtual def Start():
         sel_mgr = FindObjectOfType(draggable_selection_manager)
         mouse_down = false
         inited = false
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
+        Debug.Log("dp start running")
 
     def Update():
         if not inited:
             s = (renderer as SpriteRenderer).sprite.bounds.size
             (collider2D cast BoxCollider2D).size = s
-            connectors = [[Vector3(s.x/2, 0,0), 
-                           Vector3(1,1,0)], 
-                          [Vector3(-s.x/2, 0,0),
-                           Vector3(-1,0,0)]]
 
+            for i in range(len(connectors)):
+                (connectors[i] cast List)[0] = ((connectors[i] cast List)[0] cast Vector3) * s.x
+            Debug.Log("we have "+len(connectors)+" connectors")
             sel_mgr.connector_objs.Add(self)
             inited = true
 

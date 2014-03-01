@@ -33,6 +33,48 @@ class draggable_selection_manager(MonoBehaviour):
         (the_obj cast GameObject).GetComponent[of selectedness_obj]().game_object = obj.gameObject
         selectednesses.Add(the_obj)
 
+    def make_core():
+        new_obj = (Instantiate(Resources.Load("block_part"),
+                              Camera.main.ScreenToWorldPoint(Input.mousePosition),
+                              Quaternion.identity) cast GameObject)
+        new_obj.transform.position.z = 0
+
+        dp = new_obj.GetComponent[of draggable_part]()
+        s = (dp.renderer cast SpriteRenderer).sprite
+        Debug.Log("orig sprite has "+s.rect+" "+s.bounds)
+
+
+        if 1:
+            bloo = Instantiate(Resources.Load("red-block"),
+                                             Vector3(0,0,0),
+                                             Quaternion.identity) cast Texture2D
+            blah = Sprite.Create(bloo, 
+                                 Rect(0,0,bloo.width,bloo.height),
+                                 Vector2(0.5,0.5),#bloo.width,bloo.height)/2,
+                                 100)
+            blah.bounds.center.x = 0
+            blah.bounds.center.y = 0
+            Debug.Log("new sprite has "+blah.rect+" "+blah.bounds)
+
+            Debug.Log(blah)
+            blah.hideFlags = HideFlags.None
+            (dp.renderer cast SpriteRenderer).sprite = blah
+        Debug.Log("setting dp connectors")
+        dp.connectors = [[Vector3(0.5,0,0),
+                          Vector3(1,0,0)],
+                         [Vector3(-0.5,0,0),
+                          Vector3(-1, 0, 0)],
+                         [Vector3(0,0.5,0),
+                          Vector3(0, -1, 0)],
+                         [Vector3(0,-0.5,0),
+                          Vector3(0, 1, 0)]]
+        dp.inited = false
+        dp.is_core = true
+
+    def Update():
+        if Input.GetKeyDown("c"):
+            make_core()
+
     def FixedUpdate():
         prev_held = this_held
         this_held = false
@@ -98,7 +140,7 @@ class draggable_selection_manager(MonoBehaviour):
             if closest_ind != -1:
 
                 close_obj = (connector_objs[closest_ind] cast draggable_part)
-
+                Debug.Log(close_obj.connectors)
                 Debug.Log(prev_selected)
                 Debug.Log(prev_selected.connectors)
                 Debug.Log(closest_cntr_ind)
