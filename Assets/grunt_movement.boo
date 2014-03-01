@@ -11,6 +11,12 @@ class grunt_movement(MonoBehaviour):
     def constructor():
         is_core = true
 
+    def Start():
+        the_doonk = GameObject("garbage")
+        sel_mgr = FindObjectOfType(selection_manager)
+        mouse_coll = FindObjectOfType(mouse_follow).collider2D
+        target = transform.position
+
     def get_parent() as grunt_movement:
         if transform.parent == null:
             return self
@@ -26,13 +32,9 @@ class grunt_movement(MonoBehaviour):
             stream.Serialize(targ)
             target = targ
 
-    def Start():
-        target = transform.position
-        the_doonk = GameObject("garbage")
-        sel_mgr = FindObjectOfType(selection_manager)
-        mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
     def Update():
+        
         if Input.GetMouseButton(1) and gameObject in sel_mgr.selected:
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
             Destroy(the_doonk)
@@ -41,19 +43,20 @@ class grunt_movement(MonoBehaviour):
             the_doonk = Instantiate(Resources.Load("doonk"), target, Quaternion.identity)
 
     def FixedUpdate():
-        diff = target - transform.position
-        mag = diff.magnitude
-        size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x
-        
-        if mag < size_ish and the_doonk.name.IndexOf("doonk") != -1:
-            Destroy(the_doonk)
-            the_doonk = GameObject("garbage")
+        if is_core:
+            diff = target - transform.position
+            mag = diff.magnitude
+            size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x
 
-        mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
-        vel = diff*mul
+            if mag < size_ish and the_doonk.name.IndexOf("doonk") != -1:
+                Destroy(the_doonk)
+                the_doonk = GameObject("garbage")
 
-        transform.position += vel
-        transform.position.z = 0
+            mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
+            vel = diff*mul
+
+            transform.position += vel
+            transform.position.z = 0
 
     def OnTriggerStay2D(other as Collider2D):
         if Input.GetMouseButtonDown(0) and other == mouse_coll:

@@ -7,18 +7,21 @@ class selection_manager(MonoBehaviour):
     public dragging  as bool
     public selection_topleft as Vector3
     public selection_botright as Vector3
+    public collider_active as bool
 
     def constructor():
         selected = []
         selectednesses = []
         dragging = false
         owned = {}
-
+        collider_active = false
 
     virtual def Start():
         transform.position = Vector3(-100,-100,0)
 
     def Update():
+        Debug.Log("selection has len "+len(selected))
+        
         if Input.GetMouseButtonDown(0):
             dragging = true
             selection_topleft = Camera.main.ScreenToWorldPoint(Input.mousePosition)
@@ -43,15 +46,19 @@ class selection_manager(MonoBehaviour):
 
                 selected = []
                 selectednesses = []
+                collider_active = true
 
 
     def OnTriggerEnter2D(c as Collider2D):
-        Debug.Log("calling handle click from trigger")
-        handle_click(c.gameObject, false)
+        if collider_active:
+            Debug.Log("calling handle click from trigger")
+            handle_click(c.gameObject, false)
 
     def OnTriggerStay2D(c as Collider2D):
-        transform.position = Vector3(-100,-100,0)
-        (collider2D cast BoxCollider2D).size = Vector2(0.0001,0.0001)
+        if collider_active:
+            transform.position = Vector3(-100,-100,0)
+            (collider2D cast BoxCollider2D).size = Vector2(0.0001,0.0001)
+            collider_active = false
 
     def register_owned(obj as Object):
         owned[obj.GetInstanceID()] = true
@@ -67,12 +74,13 @@ class selection_manager(MonoBehaviour):
             hash_str += "$(key): $(owned[key])\n"
         hash_str += "}\n"
         if owned.ContainsKey(obj.GetInstanceID()):
-            selected.Add(obj.GetComponent[of grunt_movement]().get_parent())
+            actual_obj = obj.GetComponent[of grunt_movement]().get_parent()
+            selected.Add(actual_obj.gameObject)
             Debug.Log("selected len " + len(selected))
 
             the_obj = Instantiate(Resources.Load("selectedness_obj"), 
-                                  obj.transform.position, 
+                                  actual_obj.transform.position, 
                                   Quaternion.identity)
             (the_obj cast GameObject).GetComponent[of selectedness_obj]().\
-                game_object = obj.gameObject
+                game_object = actual_obj.gameObject
             selectednesses.Add(the_obj)

@@ -87,7 +87,7 @@ class draggable_selection_manager(MonoBehaviour):
                                           sel_mgr)
             child_grunt.transform.parent = new_grunt.transform
 
-        Destroy(dp)
+        Destroy(dp.gameObject)
 
         return new_grunt
 
@@ -104,10 +104,11 @@ class draggable_selection_manager(MonoBehaviour):
                 c = (connector_objs[i] cast draggable_part)
 
                 if c.is_core:
+                    Debug.Log("making core grunt tree!")
                     grunt = make_grunt_tree(c, sel_mgr)
 
-                
-
+            for s in selectednesses:
+                Destroy(s)
             Destroy(self)
 
     def FixedUpdate():
