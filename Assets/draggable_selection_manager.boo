@@ -21,6 +21,21 @@ class draggable_selection_manager(MonoBehaviour):
         prev_held = false
         this_held = false
 
+    def make_sprite(name as String):
+        bloo = Instantiate(Resources.Load(name),
+                           Vector3(0,0,0),
+                           Quaternion.identity) cast Texture2D
+        blah = Sprite.Create(bloo, 
+                             Rect(0,0,bloo.width,bloo.height),
+                             Vector2(0.5,0.5),
+                             100)
+        blah.bounds.center.x = 0
+        blah.bounds.center.y = 0
+        blah.hideFlags = HideFlags.None
+
+        return blah
+
+
     def handle_click(obj as draggable_part):
         selected = []
         for s in selectednesses:
@@ -45,20 +60,7 @@ class draggable_selection_manager(MonoBehaviour):
 
 
         if 1:
-            bloo = Instantiate(Resources.Load("red-block"),
-                                             Vector3(0,0,0),
-                                             Quaternion.identity) cast Texture2D
-            blah = Sprite.Create(bloo, 
-                                 Rect(0,0,bloo.width,bloo.height),
-                                 Vector2(0.5,0.5),#bloo.width,bloo.height)/2,
-                                 100)
-            blah.bounds.center.x = 0
-            blah.bounds.center.y = 0
-            Debug.Log("new sprite has "+blah.rect+" "+blah.bounds)
-
-            Debug.Log(blah)
-            blah.hideFlags = HideFlags.None
-            (dp.renderer cast SpriteRenderer).sprite = blah
+            (dp.renderer cast SpriteRenderer).sprite = make_sprite("red-block")
         Debug.Log("setting dp connectors")
         dp.connectors = [[Vector3(0.5,0,0),
                           Vector3(1,0,0)],
@@ -74,6 +76,13 @@ class draggable_selection_manager(MonoBehaviour):
     def Update():
         if Input.GetKeyDown("c"):
             make_core()
+        if Input.GetKeyDown("g"):
+            for i in range(len(connector_objs)):
+                c = (connector_objs[i] cast draggable_part)
+                if c.is_core:
+                    new_grunt = Instantiate(Resource.Load("
+
+                
 
     def FixedUpdate():
         prev_held = this_held
@@ -140,12 +149,6 @@ class draggable_selection_manager(MonoBehaviour):
             if closest_ind != -1:
 
                 close_obj = (connector_objs[closest_ind] cast draggable_part)
-                Debug.Log(close_obj.connectors)
-                Debug.Log(prev_selected)
-                Debug.Log(prev_selected.connectors)
-                Debug.Log(closest_cntr_ind)
-                Debug.Log(prev_selected.connectors[closest_cntr_ind])
-                Debug.Log(prev_selected.connectors[closest_cntr_ind] cast List)
                 our_connector = (prev_selected.connectors[closest_cntr_ind]
                                                   cast List)
                 other_connector = (close_obj.connectors[closest_subind] cast List)
@@ -160,6 +163,8 @@ class draggable_selection_manager(MonoBehaviour):
 
                 prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
                 prev_selected.rigidbody2D.angularVelocity = 0
+                prev_selected.transform.parent = close_obj.transform
+                prev_selected.attached = true
             
 
                                                              

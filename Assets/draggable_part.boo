@@ -7,9 +7,11 @@ class draggable_part(MonoBehaviour):
     public inited as bool
     public mouse_coll as Collider2D
     public is_core as bool
+    public attached as bool
 
     def constructor():
         is_core = false
+        attached = false
         connectors = [[Vector3(0.5,0,0),
                        Vector3(1,0,0)],
                       [Vector3(-0.5,0,0),
@@ -44,7 +46,7 @@ class draggable_part(MonoBehaviour):
     def FixedUpdate():
         rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
         rigidbody2D.AddForce(-rigidbody2D.velocity*2)
-            
+        
     def OnTriggerStay2D(other as Collider2D):
         if other == mouse_coll:
             if not mouse_down and Input.GetMouseButtonDown(0) and len(sel_mgr.selected) == 0:
