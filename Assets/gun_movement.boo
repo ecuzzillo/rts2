@@ -1,9 +1,25 @@
 ﻿import UnityEngine
 
-class gun_movement (MonoBehaviour):
+class gun_movement(grunt_movement):
+    public cooling_down as bool
+    public cooldown_timer as int
+    public gun_target as GameObject
+    public static GUN_COOLDOWN = 20
 
-    def Start ():
-        pass
+    def constructor():
+        cooling_down = false
+        cooldown_timer = 0
+        gun_target = null
 
-    def Update ():
-        pass
+    def FixedUpdate():
+        if cooling_down:
+            cooldown_timer -= 1
+            if cooldown_timer == 0:
+                cooling_down = false
+        elif gun_target:
+            fire()
+
+    def fire():
+        # Instantiate bullet
+        cooling_down = true
+        cooldown_timer = GUN_COOLDOWN
