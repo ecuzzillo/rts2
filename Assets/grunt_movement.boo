@@ -22,14 +22,6 @@ class grunt_movement(MonoBehaviour):
         sel_mgr = FindObjectOfType(selection_manager)
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
 
-    def Update():
-        if Input.GetMouseButton(1) and gameObject in sel_mgr.selected:
-            target = Camera.main.ScreenToWorldPoint(Input.mousePosition)
-            Destroy(the_doonk)
-
-            target.z = 0
-            the_doonk = Instantiate(Resources.Load("doonk"), target, Quaternion.identity)
-
     virtual def FixedUpdate():
         diff = target - transform.position
         mag = diff.magnitude
@@ -44,11 +36,3 @@ class grunt_movement(MonoBehaviour):
 
         transform.position += vel
         transform.position.z = 0
-
-    def OnTriggerStay2D(other as Collider2D):
-        if Input.GetMouseButtonDown(0) and other == mouse_coll:
-            Debug.Log("calling handle click from grunt")
-            sel_mgr.handle_click(gameObject)
-
-    def OnTriggerEnter2D(other as Collider2D):
-        OnTriggerStay2D(other)
