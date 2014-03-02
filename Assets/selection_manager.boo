@@ -10,6 +10,7 @@ class selection_manager(MonoBehaviour):
     public collider_active as bool
     public mouse as mouse_follow
     public waypoint_indicator as GameObject
+    public ld as line_drawer
 
     def constructor():
         selected = []
@@ -19,6 +20,7 @@ class selection_manager(MonoBehaviour):
         collider_active = false
 
     virtual def Start():
+        ld = GetComponent[of line_drawer]()
         waypoint_indicator = GameObject("garbage")
         transform.position = Vector3(-100,-100,0)
         mouse = FindObjectOfType(mouse_follow)
@@ -33,11 +35,28 @@ class selection_manager(MonoBehaviour):
         if Input.GetMouseButtonDown(0):
             dragging = true
             selection_topleft = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            selection_topleft.z = 0
 
         if Input.GetMouseButton(0):
             selection_botright = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            selection_botright.z = 0
+
+            # fuck this for now
+            if 0:
+                p1 = Vector3(selection_topleft.x, 
+                             selection_botright.y, 
+                             0)
+                p3 = Vector3(selection_botright.x, 
+                             selection_topleft.y, 
+                             0)
+
+                ld.draw_line(gameObject.GetComponent[of MeshFilter](), 
+                             [selection_topleft, p1, selection_botright, p3],
+                             5, 
+                             true)
+            
+
         elif dragging:
-            # (collider2D cast BoxCollider2D).center \
             transform.position \
                 = (selection_topleft + selection_botright)/2
             (collider2D cast BoxCollider2D).size \
