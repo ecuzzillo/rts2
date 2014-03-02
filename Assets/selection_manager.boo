@@ -19,10 +19,6 @@ class selection_manager(MonoBehaviour):
         collider_active = false
 
     virtual def Start():
-        transform.position = Vector3(-100,-100,0)
-
-
-    virtual def Start():
         waypoint_indicator = GameObject("garbage")
         transform.position = Vector3(-100,-100,0)
         mouse = FindObjectOfType(mouse_follow)
