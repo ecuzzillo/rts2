@@ -48,7 +48,16 @@ class selection_manager(MonoBehaviour):
                 selectednesses = []
                 collider_active = true
 
-
+        if Input.GetKey("right"):
+            Camera.main.transform.position.x += 0.05
+        if Input.GetKey("left"):
+            Camera.main.transform.position.x -= 0.05
+        if Input.GetKey("up"):
+            Camera.main.transform.position.y += 0.05
+        if Input.GetKey("down"):
+            Camera.main.transform.position.y -= 0.05
+            
+            
     def OnTriggerEnter2D(c as Collider2D):
         if collider_active:
             Debug.Log("calling handle click from trigger")
