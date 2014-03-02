@@ -24,8 +24,12 @@ class selection_manager(MonoBehaviour):
         mouse = FindObjectOfType(mouse_follow)
 
     def Update():
-        Debug.Log("selection has len "+len(selected))
-        
+        dragging_selection_update()
+        mouse_click_update()
+        keyboard_update()
+
+    # Check for mass selection
+    def dragging_selection_update():
         if Input.GetMouseButtonDown(0):
             dragging = true
             selection_topleft = Camera.main.ScreenToWorldPoint(Input.mousePosition)
@@ -50,9 +54,11 @@ class selection_manager(MonoBehaviour):
             selected = []
             selectednesses = []
 
+    # Check for mouse clicks
+    def mouse_click_update():
         if Input.GetMouseButtonUp(0):
             if mouse.hover_obj != null:
-                handle_click(mouse.hover_obj)
+                handle_left_click(mouse.hover_obj)
             else:
                 selected = []
                 selectednesses = []
@@ -64,6 +70,8 @@ class selection_manager(MonoBehaviour):
             elif selected:
                 set_waypoints()
 
+    # Check for keyboard input
+    def keyboard_update():
         if Input.GetKey("right"):
             Camera.main.transform.position.x += 0.05
         if Input.GetKey("left"):
@@ -72,12 +80,12 @@ class selection_manager(MonoBehaviour):
             Camera.main.transform.position.y += 0.05
         if Input.GetKey("down"):
             Camera.main.transform.position.y -= 0.05
-            
-            
+
+
     def OnTriggerEnter2D(c as Collider2D):
         if collider_active:
             Debug.Log("calling handle click from trigger")
-            handle_click(c.gameObject, false)
+            handle_left_click(c.gameObject, false)
 
     def OnTriggerStay2D(c as Collider2D):
         if collider_active:
@@ -85,7 +93,7 @@ class selection_manager(MonoBehaviour):
             (collider2D cast BoxCollider2D).size = Vector2(0.0001,0.0001)
             collider_active = false
 
-    # For each selected unit, if that unit is a gun, target the "obj" unit
+    # For each selected unit, if that unit is a gun, target the argument unit
     def target_guns(obj as GameObject):
         for selected_obj in selected:
             component = (selected_obj cast GameObject).GetComponent[of gun_movement]()
@@ -111,16 +119,10 @@ class selection_manager(MonoBehaviour):
     def register_owned(obj as Object):
         owned[obj.GetInstanceID()] = true
 
-    def handle_click(obj as GameObject):
-        handle_click(obj, true)
+    def handle_left_click(obj as GameObject):
+        handle_left_click(obj, true)
 
-    def handle_click(obj as GameObject, reset as bool):
-        if reset:
-            selected = []
-        hash_str = "{\n"
-        for key in owned.Keys:
-            hash_str += "$(key): $(owned[key])\n"
-        hash_str += "}\n"
+    def handle_left_click(obj as GameObject, reset as bool):
         if owned.ContainsKey(obj.GetInstanceID()):
             actual_obj = obj.GetComponent[of grunt_movement]().get_parent()
             selected.Add(actual_obj.gameObject)
