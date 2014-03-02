@@ -21,6 +21,11 @@ class gun_movement(grunt_movement):
             fire()
 
     def fire():
-        # Instantiate bullet in direction of enemy
+        my_bullet = Instantiate(Resources.Load("bullet"),
+                             transform.position,
+                             Quaternion.identity) as GameObject
+        bullet_attrs = my_bullet.GetComponent[of bullet]()
+        bullet_attrs.velocity = (gun_target.transform.position - transform.position).normalized * bullet_attrs.speed
+        bullet_attrs.shooter = gameObject
         cooling_down = true
         cooldown_timer = GUN_COOLDOWN
