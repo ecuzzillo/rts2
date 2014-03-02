@@ -7,9 +7,13 @@ class grunt_movement(MonoBehaviour):
     public sel_mgr as selection_manager
     public mouse_coll as Collider2D
     public is_core as bool
+    public health as int
+    public max_health as int
 
     def constructor():
         is_core = true
+        max_health = 5
+        health = max_health
 
     def Start():
         the_doonk = GameObject("garbage")
@@ -22,7 +26,7 @@ class grunt_movement(MonoBehaviour):
             return self
         else:
             return transform.parent.gameObject.GetComponent[of grunt_movement]().get_parent()
-    
+
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
         targ as Vector3
         if stream.isWriting:
@@ -47,3 +51,16 @@ class grunt_movement(MonoBehaviour):
 
             transform.position += vel
             transform.position.z = 0
+
+    def damage(damage_amt as int):
+        update_health(-1 * damage_amt)
+
+    def update_health(amt as int):
+        health += amt
+        if health > max_health:
+            health = max_health
+        elif health <= 0:
+            die()
+
+    def die():
+        Destroy(self.gameObject)
