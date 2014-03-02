@@ -198,6 +198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca6f66fc1b404251bc9a677fd912b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hover_obj: {fileID: 0}
+  hover_timer: 0
 --- !u!4 &1396638579
 Transform:
   m_ObjectHideFlags: 0
@@ -406,6 +408,8 @@ MonoBehaviour:
   dragging: 0
   selection_topleft: {x: 0, y: 0, z: 0}
   selection_botright: {x: 0, y: 0, z: 0}
+  mouse: {fileID: 0}
+  waypoint_indicator: {fileID: 0}
 --- !u!4 &1973965829
 Transform:
   m_ObjectHideFlags: 0
