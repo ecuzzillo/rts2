@@ -30,7 +30,7 @@ class main_menu_script(MonoBehaviour):
                           "Start Server"):
                 Debug.Log("Starting Server")
                 netw_mgr.start_server()
-                StartCoroutine(create_grunt(6, 0, 0))
+                #StartCoroutine(create_grunt(6, 0, 0))
 
             if GUI.Button(Rect(btn_x, 
                                btn_y * 1.2 + btn_h, 
@@ -48,11 +48,11 @@ class main_menu_script(MonoBehaviour):
                                        btn_h), 
                                   netw_mgr.host_data[i].gameName):
                         Network.Connect(netw_mgr.host_data[i])
-                        StartCoroutine(create_grunt(-6, 0, 0))
+                        #StartCoroutine(create_grunt(-6, 0, 0))
 
     def create_grunt(x, y, z) as IEnumerator:
         yield WaitForSeconds(1)
         pos = Vector3(x, y, z)
         obj = Network.Instantiate(Resources.Load("grunt"), pos, Quaternion.identity, 0)
-        sel_mgr as selection_manager = FindObjectOfType(selection_manager)
-        sel_mgr.register_owned(obj)
+        #sel_mgr as networked_draggable_selection_manager = FindObjectOfType(networked_draggable_selection_manager)
+        #sel_mgr.register_owned(obj)

@@ -2,7 +2,7 @@
 
 class draggable_part(MonoBehaviour):
     public mouse_down as bool
-    public sel_mgr as draggable_selection_manager
+    public sel_mgr as networked_draggable_selection_manager
     public connectors as List
     public inited as bool
     public mouse_coll as Collider2D
@@ -17,7 +17,7 @@ class draggable_part(MonoBehaviour):
                       [Vector3(-0.5,0,0),
                        Vector3(-1, 1, 0)]]
     virtual def Start():
-        sel_mgr = FindObjectOfType(draggable_selection_manager)
+        sel_mgr = FindObjectOfType(networked_draggable_selection_manager)
         mouse_down = false
         inited = false
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
@@ -59,3 +59,6 @@ class draggable_part(MonoBehaviour):
             
     def OnTriggerEnter2D(other as Collider2D):
         OnTriggerStay2D(other)
+
+    def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
+        pass
