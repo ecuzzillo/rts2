@@ -1,11 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/draggable_part.boo">
     <Files>
+      <File FileName="Assets/NewBehaviourScript.boo" Line="1" Column="1" />
       <File FileName="Temp/Compiled-Unlit-Alpha.shader" Line="1" Column="1" />
       <File FileName="Assets/grunt_movement.boo" Line="1" Column="1" />
       <File FileName="Assets/selection_manager.boo" Line="1" Column="1" />
-      <File FileName="Assets/draggable_part.boo" Line="1" Column="1" />
+      <File FileName="Assets/draggable_part.boo" Line="11" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

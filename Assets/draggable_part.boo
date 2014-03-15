@@ -46,7 +46,7 @@ class draggable_part(MonoBehaviour):
     def FixedUpdate():
         rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
         rigidbody2D.AddForce(-rigidbody2D.velocity*2)
-        
+
     def OnTriggerStay2D(other as Collider2D):
         if other == mouse_coll:
             if not mouse_down and Input.GetMouseButtonDown(0) and len(sel_mgr.selected) == 0:
@@ -56,9 +56,20 @@ class draggable_part(MonoBehaviour):
             elif mouse_down and not Input.GetMouseButton(0):
                 sel_mgr.selected = []
                 mouse_down = false
-            
+
     def OnTriggerEnter2D(other as Collider2D):
         OnTriggerStay2D(other)
 
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
-        pass
+        att as bool
+        core as bool
+        if stream.isWriting:
+            att = attached
+            core = is_core
+            stream.Serialize(att)
+            stream.Serialize(core)
+        else:
+            stream.Serialize(att)
+            stream.Serialize(core)
+            attached = att
+            is_core = core
