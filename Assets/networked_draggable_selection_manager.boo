@@ -200,6 +200,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
                 prev_selected.rigidbody2D.angularVelocity = 0
                 prev_selected.transform.parent = close_obj.transform
                 prev_selected.attached = true
+                prev_selected.sync_mount()
             
 
                                                              
