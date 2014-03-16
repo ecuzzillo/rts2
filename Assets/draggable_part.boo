@@ -9,8 +9,12 @@ class draggable_part(MonoBehaviour):
     public mouse_coll as Collider2D
     public is_core as bool
     public attached as bool
+    public grunt_prefab_name as string
+    public sprite_name as string
 
     def constructor():
+        grunt_prefab_name = "grunt"
+        sprite_name = "arrow-block-corners"
         is_core = false
         attached = false
         connectors = [[Vector3(0.5,0,0),
@@ -99,6 +103,19 @@ class draggable_part(MonoBehaviour):
                             transform.localPosition,
                             transform.localEulerAngles)
 
+    def set_sprname(sprname as string):
+        Debug.Log("running set sprname")
+        sprite_name = sprname
+        networkView.RPC("on_receive_sprname", RPCMode.Others, sprite_name)
+
+    [RPC]
+    def on_receive_sprname(sprname as string):
+        Debug.Log("running receive sprname")
+        sprite_name = sprname
+        o = GameObject.Find("netw_draggable_sel_mgr")
+        n = o.GetComponent[of networked_draggable_selection_manager]()
+        n.set_sprite(self, n.make_sprite(sprite_name))
+
     def OnSerializeNetworkView(stream as BitStream, info as NetworkMessageInfo) as void:
         att as bool
         core as bool
@@ -112,3 +129,4 @@ class draggable_part(MonoBehaviour):
             stream.Serialize(core)
             attached = att
             is_core = core
+                

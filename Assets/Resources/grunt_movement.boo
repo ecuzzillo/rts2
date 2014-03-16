@@ -9,8 +9,10 @@ class grunt_movement(MonoBehaviour):
     public is_core as bool
     public health as int
     public max_health as int
+    public sprite_name as string
 
     def constructor():
+        sprite_name = "arrow-block-corners"
         is_core = true
         max_health = 5
         health = max_health
@@ -51,6 +53,20 @@ class grunt_movement(MonoBehaviour):
 
             transform.position += vel
             transform.position.z = 0
+
+    def set_sprname(sprname as string):
+        Debug.Log("running set sprname")
+        sprite_name = sprname
+        networkView.RPC("on_receive_sprname", RPCMode.Others, sprite_name)
+
+    [RPC]
+    def on_receive_sprname(sprname as string):
+        Debug.Log("running receive sprname "+sprname)
+        sprite_name = sprname
+        o = GameObject.Find("netw_draggable_sel_mgr")
+        n = o.GetComponent[of networked_draggable_selection_manager]()
+        n.set_sprite(self, n.make_sprite(sprite_name))
+
 
     def damage(damage_amt as int):
         update_health(-1 * damage_amt)

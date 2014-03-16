@@ -11,7 +11,7 @@ class scene_init(MonoBehaviour):
                             Quaternion.identity)
         sel_mgr.register_owned(grunt)
 
-        gun = Instantiate(Resources.Load("gun"),
+        gun = Instantiate(Resources.Load("gun_obj"),
                           Vector3(20, 0, 0),
                           Quaternion.identity)
         sel_mgr.register_owned(gun)

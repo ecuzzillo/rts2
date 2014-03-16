@@ -16,7 +16,7 @@ GameObject:
   - 50: {fileID: 5000000}
   - 148: {fileID: 14800000}
   m_Layer: 0
-  m_Name: gun
+  m_Name: gun_obj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,6 +103,9 @@ MonoBehaviour:
   the_doonk: {fileID: 0}
   sel_mgr: {fileID: 0}
   mouse_coll: {fileID: 0}
+  is_core: 1
+  health: 5
+  max_health: 5
   cooling_down: 0
   cooldown_timer: 0
   gun_target: {fileID: 0}
