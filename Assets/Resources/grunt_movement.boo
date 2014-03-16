@@ -63,9 +63,32 @@ class grunt_movement(MonoBehaviour):
     def on_receive_sprname(sprname as string):
         Debug.Log("running receive sprname "+sprname)
         sprite_name = sprname
-        o = GameObject.Find("netw_draggable_sel_mgr")
-        n = o.GetComponent[of networked_draggable_selection_manager]()
-        n.set_sprite(self, n.make_sprite(sprite_name))
+        o = GameObject.FindObjectOfType(networked_draggable_selection_manager)
+        if o == null:
+            p = GameObject.FindObjectOfType(selection_manager)
+            m = p.GetComponent[of selection_manager]()
+            set_sprite(self, make_sprite(sprite_name))
+        else:
+            n = o.GetComponent[of networked_draggable_selection_manager]()
+            n.set_sprite(self, n.make_sprite(sprite_name))
+
+    def set_sprite(dp as MonoBehaviour,
+                   s as Sprite):
+        (dp.renderer cast SpriteRenderer).sprite = s
+
+    def make_sprite(name as string):
+        bloo = Instantiate(Resources.Load(name),
+                           Vector3(0,0,0),
+                           Quaternion.identity) cast Texture2D
+        blah = Sprite.Create(bloo,
+                             Rect(0,0,bloo.width,bloo.height),
+                             Vector2(0.5,0.5),
+                             100)
+        blah.bounds.center.x = 0
+        blah.bounds.center.y = 0
+        blah.hideFlags = HideFlags.None
+
+        return blah
 
 
     def damage(damage_amt as int):
