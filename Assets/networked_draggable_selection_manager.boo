@@ -48,20 +48,20 @@ class networked_draggable_selection_manager(MonoBehaviour):
         (the_obj cast GameObject).GetComponent[of selectedness_obj]().game_object = obj.gameObject
         selectednesses.Add(the_obj)
 
-    def make_core():
+    def make_part_at_cursor():
         new_obj = (Network.Instantiate(Resources.Load("block_part"),
-                              Camera.main.ScreenToWorldPoint(Input.mousePosition),
-                              Quaternion.identity, 0) cast GameObject)
+                                       Camera.main.ScreenToWorldPoint(Input.mousePosition),
+                                       Quaternion.identity, 0) cast GameObject)
         new_obj.transform.position.z = 0
+        return new_obj
 
+    def set_sprite(dp as MonoBehaviour, 
+                   s as Sprite):
+        (dp.renderer cast SpriteRenderer).sprite = s
+
+    def make_core():
+        new_obj = make_part_at_cursor()
         dp = new_obj.GetComponent[of draggable_part]()
-        s = (dp.renderer cast SpriteRenderer).sprite
-        Debug.Log("orig sprite has "+s.rect+" "+s.bounds)
-
-
-        if 1:
-            (dp.renderer cast SpriteRenderer).sprite = make_sprite("red-block")
-        Debug.Log("setting dp connectors")
         dp.connectors = [[Vector3(0.5,0,0),
                           Vector3(1,0,0)],
                          [Vector3(-0.5,0,0),
@@ -72,22 +72,31 @@ class networked_draggable_selection_manager(MonoBehaviour):
                           Vector3(0, 1, 0)]]
         dp.inited = false
         dp.is_core = true
+        dp.set_sprname("red-block")
+        set_sprite(dp, make_sprite("red-block"))
 
-    def make_block():
-        new_obj = (Network.Instantiate(Resources.Load("block_part"),
-                                       Camera.main.ScreenToWorldPoint(Input.mousePosition),
-                                       Quaternion.identity, 0) cast GameObject)
-        new_obj.transform.position.z = 0
+
+    def make_gun():
+        new_obj = make_part_at_cursor()
+        dp = new_obj.GetComponent[of draggable_part]()
+        dp.set_sprname("gun")
+        set_sprite(dp, make_sprite("gun"))
+        dp.connectors = [[Vector3(0.5,0,0),
+                          Vector3(1,0,0)]]
+        dp.inited = false
+        dp.is_core = false
+        dp.grunt_prefab_name = "gun_obj"
 
     def make_grunt_tree(dp as draggable_part, 
                         sel_mgr as selection_manager) as grunt_movement:
-        new_grunt = (Network.Instantiate(Resources.Load("grunt"), 
+        new_grunt = (Network.Instantiate(Resources.Load(dp.grunt_prefab_name), 
                                 dp.transform.position, 
                                 dp.transform.rotation, 0) 
                      cast GameObject).GetComponent[of grunt_movement]()
-        (new_grunt.renderer cast SpriteRenderer).sprite = (dp.renderer cast SpriteRenderer).sprite
         new_grunt.is_core = dp.is_core
         sel_mgr.register_owned(new_grunt.gameObject)
+        (new_grunt.renderer cast SpriteRenderer).sprite = (dp.renderer cast SpriteRenderer).sprite
+        new_grunt.set_sprname(dp.sprite_name)
         for child as Transform in dp.transform:
             child_grunt = make_grunt_tree(child.gameObject.GetComponent[of draggable_part](),
                                           sel_mgr)
@@ -101,7 +110,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
         if Input.GetKeyDown("c"):
             make_core()
         if Input.GetKeyDown("r"):
-            make_block()
+            make_part_at_cursor()
+        if Input.GetKeyDown("u"):
+            make_gun()
         if Input.GetKeyDown("g"):
             sel_mgr = (Network.Instantiate(Resources.Load("selection_manager_obj"),
                                    Vector3(0,0,0),

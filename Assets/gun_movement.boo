@@ -25,7 +25,8 @@ class gun_movement(grunt_movement):
                              transform.position,
                              Quaternion.identity) as GameObject
         bullet_attrs = my_bullet.GetComponent[of bullet]()
-        bullet_attrs.velocity = (gun_target.transform.position - transform.position).normalized * bullet_attrs.speed
+        bullet_attrs.velocity = (gun_target.transform.position - 
+                                 transform.position).normalized * bullet_attrs.speed
         bullet_attrs.shooter = gameObject
         cooling_down = true
         cooldown_timer = GUN_COOLDOWN
