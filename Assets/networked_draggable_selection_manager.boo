@@ -168,7 +168,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
                     break
                 else:
                     close_enough = false
-                    prev_closest_info = [0, -1, -1, -1]
+                    prev_closest_info = [-1, -1, -1, -1]
                     
                     
 
@@ -181,27 +181,26 @@ class networked_draggable_selection_manager(MonoBehaviour):
             closest_ind = prev_closest_info[2]
             closest_subind = prev_closest_info[3]
 
+            Debug.Log("closest_ind: " + closest_ind)
+
             if closest_ind != -1:
 
                 close_obj = (connector_objs[closest_ind] cast draggable_part)
-                our_connector = (prev_selected.connectors[closest_cntr_ind]
-                                                  cast List)
-                other_connector = (close_obj.connectors[closest_subind] cast List)
+                if not close_obj.transform.parent == prev_selected.transform:
+                    our_connector = (prev_selected.connectors[closest_cntr_ind]
+                                                      cast List)
+                    other_connector = (close_obj.connectors[closest_subind] cast List)
 
-                prev_selected.transform.rotation \
-                    = (close_obj.transform.rotation * 
-                       Quaternion.FromToRotation(-(other_connector[1] cast Vector3),
-                                                 (our_connector[1] cast Vector3)))
-                prev_selected.transform.position \
-                    = (close_obj.transform.TransformPoint(other_connector[0]) 
-                       - prev_selected.transform.rotation * (our_connector[0] cast Vector3))
+                    prev_selected.transform.rotation \
+                        = (close_obj.transform.rotation * 
+                           Quaternion.FromToRotation(-(other_connector[1] cast Vector3),
+                                                     (our_connector[1] cast Vector3)))
+                    prev_selected.transform.position \
+                        = (close_obj.transform.TransformPoint(other_connector[0]) 
+                           - prev_selected.transform.rotation * (our_connector[0] cast Vector3))
 
-                prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
-                prev_selected.rigidbody2D.angularVelocity = 0
-                prev_selected.transform.parent = close_obj.transform
-                prev_selected.attached = true
-                prev_selected.sync_mount()
-            
-
-                                                             
-
+                    prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
+                    prev_selected.rigidbody2D.angularVelocity = 0
+                    prev_selected.transform.parent = close_obj.transform
+                    prev_selected.attached = true
+                    prev_selected.sync_mount()

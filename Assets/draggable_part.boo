@@ -91,7 +91,7 @@ class draggable_part(MonoBehaviour):
         transform.localPosition = l_pos
 
     def sync_mount():
-        if networkView.isMine and transform.parent != null:
+        if networkView.isMine:
             view_id = transform.parent.networkView.viewID
             networkView.RPC("link_to_parent",
                             RPCMode.OthersBuffered,
