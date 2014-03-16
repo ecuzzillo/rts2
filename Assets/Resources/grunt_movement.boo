@@ -71,6 +71,10 @@ class grunt_movement(MonoBehaviour):
     def damage(damage_amt as int):
         update_health(-1 * damage_amt)
 
+    [RPC]
+    def RPC_damage(damage_amt as int):
+        update_health(-1 * damage_amt)
+
     def update_health(amt as int):
         health += amt
         if health > max_health:
@@ -80,3 +84,13 @@ class grunt_movement(MonoBehaviour):
 
     def die():
         Destroy(self.gameObject)
+
+    def select_guns():
+        return gameObject.GetComponentsInChildren(gun_movement, true)
+
+    def target_guns(obj as GameObject):
+        guns as (Component) = select_guns()
+        for gun as gun_movement in guns:
+            gun.gun_target = obj
+
+

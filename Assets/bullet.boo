@@ -15,7 +15,8 @@ class bullet(MonoBehaviour):
         transform.position += velocity
 
     def OnTriggerEnter2D(other as Collider2D):
-        if other.gameObject != shooter:
+        sel_mgr as selection_manager = FindObjectOfType(selection_manager)
+        if other.gameObject != shooter and not other.gameObject.GetInstanceID() in sel_mgr.owned:
             unit_attrs = other.gameObject.GetComponent[of grunt_movement]()
             unit_attrs.damage(BULLET_DAMAGE)
             Destroy(self.gameObject)

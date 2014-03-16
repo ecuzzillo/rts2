@@ -92,13 +92,13 @@ class selection_manager(MonoBehaviour):
     # Check for keyboard input
     def keyboard_update():
         if Input.GetKey("right"):
-            Camera.main.transform.position.x += 0.05
+            Camera.main.transform.position.x += 0.25
         if Input.GetKey("left"):
-            Camera.main.transform.position.x -= 0.05
+            Camera.main.transform.position.x -= 0.25
         if Input.GetKey("up"):
-            Camera.main.transform.position.y += 0.05
+            Camera.main.transform.position.y += 0.25
         if Input.GetKey("down"):
-            Camera.main.transform.position.y -= 0.05
+            Camera.main.transform.position.y -= 0.25
 
 
     def OnTriggerEnter2D(c as Collider2D):
@@ -115,9 +115,11 @@ class selection_manager(MonoBehaviour):
     # For each selected unit, if that unit is a gun, target the argument unit
     def target_guns(obj as GameObject):
         for selected_obj in selected:
-            component = (selected_obj cast GameObject).GetComponent[of gun_movement]()
-            if component != null:
-                component.gun_target = obj
+            #component = (selected_obj cast GameObject).GetComponent[of gun_movement]()
+            #if component != null:
+            #    component.gun_target = obj
+            component = (selected_obj cast GameObject).GetComponent[of grunt_movement]()
+            component.target_guns(obj)
 
     # For each selected unit, set the unit's waypoint to the mouse position
     def set_waypoints():

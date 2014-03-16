@@ -4,7 +4,7 @@ class gun_movement(grunt_movement):
     public cooling_down as bool
     public cooldown_timer as int
     public gun_target as GameObject
-    public static GUN_COOLDOWN = 120
+    public static GUN_COOLDOWN = 60
 
     def constructor():
         cooling_down = false
