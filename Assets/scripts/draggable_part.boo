@@ -21,12 +21,14 @@ class draggable_part(MonoBehaviour):
                        Vector3(1,0,0)],
                       [Vector3(-0.5,0,0),
                        Vector3(-1, 1, 0)]]
+
     virtual def Start():
         sel_mgr = FindObjectOfType(networked_draggable_selection_manager)
         mouse_down = false
         inited = false
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
         Debug.Log("dp start running")
+        sel_mgr.register_owned(self.gameObject)
 
     def Update():
         if not inited:

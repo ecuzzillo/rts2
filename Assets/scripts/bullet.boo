@@ -21,4 +21,4 @@ class bullet(MonoBehaviour):
             Debug.Log("foo: " + other.gameObject)
             Debug.Log("bar: " + other.gameObject.GetComponent[of grunt_movement]())
             unit_attrs.damage(BULLET_DAMAGE)
-            Destroy(self.gameObject)
+            Network.Destroy(self.networkView.viewID)

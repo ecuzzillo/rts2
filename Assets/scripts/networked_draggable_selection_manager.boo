@@ -6,12 +6,16 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public connector_objs as List
     public max_force as double
     public this_held as bool
+    public owned as Hash
     public prev_held as bool
     public prev_closest_info as List
     public prev_selected as draggable_part
     public close_enough as bool
     public selected as List
     public selectednesses as List
+
+    def constructor():
+        owned = {}
 
     def Start():
         selected = []
@@ -20,6 +24,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
         max_force = 4.0
         prev_held = false
         this_held = false
+
+    def register_owned(obj as Object):
+        owned[obj.GetInstanceID()] = true
 
     def make_sprite(name as string):
         bloo = Instantiate(Resources.Load(name),
@@ -101,8 +108,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
             child_grunt = make_grunt_tree(child.gameObject.GetComponent[of draggable_part](),
                                           sel_mgr)
             child_grunt.transform.parent = new_grunt.transform
+            child_grunt.sync_mount()
 
-        Destroy(dp.gameObject)
+        Network.Destroy(dp.networkView.viewID)
 
         return new_grunt
 
@@ -114,17 +122,18 @@ class networked_draggable_selection_manager(MonoBehaviour):
         if Input.GetKeyDown("u"):
             make_gun()
         if Input.GetKeyDown("g"):
-            sel_mgr = (Network.Instantiate(Resources.Load("selection_manager_obj"),
+            sel_mgr = (Instantiate(Resources.Load("selection_manager_obj"),
                                    Vector3(0,0,0),
-                                   Quaternion.identity, 0) 
+                                   Quaternion.identity)
                        cast GameObject).GetComponent[of selection_manager]()
 
             for i in range(len(connector_objs)):
                 c = (connector_objs[i] cast draggable_part)
 
-                if c.is_core:
-                    Debug.Log("making core grunt tree!")
-                    grunt = make_grunt_tree(c, sel_mgr)
+                if c.gameObject.GetInstanceID() in owned:
+                    if c.is_core:
+                        Debug.Log("making core grunt tree!")
+                        grunt = make_grunt_tree(c, sel_mgr)
 
             for s in selectednesses:
                 Destroy(s)

@@ -116,4 +116,42 @@ class grunt_movement(MonoBehaviour):
         for gun as gun_movement in guns:
             gun.gun_target = obj
 
+    def get_mount_path() as string:
+        str as string = ""
+        cur as Transform = transform.parent
+        while cur != null and cur.parent != null:
+            str = cur.name + "/" + str
+            cur = cur.parent
+        if len(str) > 0 and str[0] == "/":
+            return str[1:]
+        else:
+            return str
+
+    [RPC]
+    def link_to_parent(root_id as NetworkViewID,
+                       l_pos as Vector3,
+                       l_euler as Vector3):
+        root_point as Transform = NetworkView.Find(root_id).transform
+        StartCoroutine(do_mount(root_point, l_pos, l_euler))
+
+    def do_mount(root_point as Transform,
+                 l_pos as Vector3,
+                 l_euler as Vector3) as IEnumerator:
+        mount_point = root_point.transform
+        while mount_point == null:
+            yield WaitForSeconds(0.5f)
+            mount_point = root_point.transform
+        transform.parent = mount_point
+        transform.gameObject.GetComponent[of grunt_movement]().is_core = false
+        transform.localEulerAngles = l_euler
+        transform.localPosition = l_pos
+
+    def sync_mount():
+        if networkView.isMine:
+            view_id = transform.parent.networkView.viewID
+            networkView.RPC("link_to_parent",
+                            RPCMode.OthersBuffered,
+                            view_id,
+                            transform.localPosition,
+                            transform.localEulerAngles)
 
