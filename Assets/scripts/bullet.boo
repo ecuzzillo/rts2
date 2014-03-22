@@ -18,7 +18,5 @@ class bullet(MonoBehaviour):
         sel_mgr as selection_manager = FindObjectOfType(selection_manager)
         if other.gameObject != shooter and not other.gameObject.GetInstanceID() in sel_mgr.owned:
             unit_attrs = other.gameObject.GetComponent[of grunt_movement]()
-            Debug.Log("foo: " + other.gameObject)
-            Debug.Log("bar: " + other.gameObject.GetComponent[of grunt_movement]())
             unit_attrs.damage(BULLET_DAMAGE)
             Network.Destroy(self.networkView.viewID)

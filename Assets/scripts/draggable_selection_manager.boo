@@ -56,12 +56,10 @@ class draggable_selection_manager(MonoBehaviour):
 
         dp = new_obj.GetComponent[of draggable_part]()
         s = (dp.renderer cast SpriteRenderer).sprite
-        Debug.Log("orig sprite has "+s.rect+" "+s.bounds)
 
 
         if 1:
             (dp.renderer cast SpriteRenderer).sprite = make_sprite("red-block")
-        Debug.Log("setting dp connectors")
         dp.connectors = [[Vector3(0.5,0,0),
                           Vector3(1,0,0)],
                          [Vector3(-0.5,0,0),
@@ -104,7 +102,6 @@ class draggable_selection_manager(MonoBehaviour):
                 c = (connector_objs[i] cast draggable_part)
 
                 if c.is_core:
-                    Debug.Log("making core grunt tree!")
                     grunt = make_grunt_tree(c, sel_mgr)
 
             for s in selectednesses:
@@ -167,7 +164,6 @@ class draggable_selection_manager(MonoBehaviour):
             prev_selected = obji
 
         if prev_held and not this_held:
-            Debug.Log("Setting position omgomgomg")
             closest_dist = prev_closest_info[0]
             closest_cntr_ind = prev_closest_info[1]
             closest_ind = prev_closest_info[2]

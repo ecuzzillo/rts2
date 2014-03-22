@@ -55,13 +55,11 @@ class grunt_movement(MonoBehaviour):
             transform.position.z = 0
 
     def set_sprname(sprname as string):
-        Debug.Log("running set sprname")
         sprite_name = sprname
         networkView.RPC("on_receive_sprname", RPCMode.Others, sprite_name)
 
     [RPC]
     def on_receive_sprname(sprname as string):
-        Debug.Log("running receive sprname "+sprname)
         sprite_name = sprname
         o = GameObject.FindObjectOfType(networked_draggable_selection_manager)
         if o == null:

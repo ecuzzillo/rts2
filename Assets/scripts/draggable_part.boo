@@ -27,7 +27,6 @@ class draggable_part(MonoBehaviour):
         mouse_down = false
         inited = false
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
-        Debug.Log("dp start running")
         sel_mgr.register_owned(self.gameObject)
 
     def Update():
@@ -37,7 +36,6 @@ class draggable_part(MonoBehaviour):
 
             for i in range(len(connectors)):
                 (connectors[i] cast List)[0] = ((connectors[i] cast List)[0] cast Vector3) * s.x
-            Debug.Log("we have "+len(connectors)+" connectors")
             sel_mgr.connector_objs.Add(self)
             inited = true
 
@@ -106,13 +104,11 @@ class draggable_part(MonoBehaviour):
                             transform.localEulerAngles)
 
     def set_sprname(sprname as string):
-        Debug.Log("running set sprname")
         sprite_name = sprname
         networkView.RPC("on_receive_sprname", RPCMode.Others, sprite_name)
 
     [RPC]
     def on_receive_sprname(sprname as string):
-        Debug.Log("running receive sprname")
         sprite_name = sprname
         o = GameObject.Find("netw_draggable_sel_mgr")
         n = o.GetComponent[of networked_draggable_selection_manager]()

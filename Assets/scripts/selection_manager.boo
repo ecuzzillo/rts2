@@ -103,7 +103,6 @@ class selection_manager(MonoBehaviour):
 
     def OnTriggerEnter2D(c as Collider2D):
         if collider_active:
-            Debug.Log("calling handle click from trigger")
             handle_left_click(c.gameObject, false)
 
     def OnTriggerStay2D(c as Collider2D):
@@ -147,7 +146,6 @@ class selection_manager(MonoBehaviour):
         if owned.ContainsKey(obj.GetInstanceID()):
             actual_obj = obj.GetComponent[of grunt_movement]().get_parent()
             selected.Add(actual_obj.gameObject)
-            Debug.Log("selected len " + len(selected))
 
             the_obj = Instantiate(Resources.Load("selectedness_obj"), 
                                   actual_obj.transform.position, 

@@ -132,7 +132,6 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
                 if c.gameObject.GetInstanceID() in owned:
                     if c.is_core:
-                        Debug.Log("making core grunt tree!")
                         grunt = make_grunt_tree(c, sel_mgr)
 
             for s in selectednesses:
@@ -195,13 +194,11 @@ class networked_draggable_selection_manager(MonoBehaviour):
             prev_selected = obji
 
         if prev_held and not this_held:
-            Debug.Log("Setting position omgomgomg")
             closest_dist = prev_closest_info[0]
             closest_cntr_ind = prev_closest_info[1]
             closest_ind = prev_closest_info[2]
             closest_subind = prev_closest_info[3]
 
-            Debug.Log("closest_ind: " + closest_ind)
 
             if closest_ind != -1:
 

@@ -19,7 +19,6 @@ class network_manager_script(MonoBehaviour):
 
     def OnMasterServerEvent(mse as MasterServerEvent):
         if mse == MasterServerEvent.RegistrationSucceeded:
-            Debug.Log("Registration Succeeded")
 
     def Update():
         if refreshing and MasterServer.PollHostList().Length != 0:

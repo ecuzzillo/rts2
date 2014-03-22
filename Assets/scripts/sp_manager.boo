@@ -13,9 +13,6 @@ class sp_manager(MonoBehaviour):
             player_grunts.Add(Instantiate(Resources.Load("grunt"), 
                                           Vector3(i*15-40, -8, 0), 
                                           Quaternion.identity))
-            Debug.Log(i)
-            Debug.Log(len(player_grunts))
-            Debug.Log(player_grunts[i])
             sel_mgr.register_owned(player_grunts[i])
             npc_grunts.Add(Instantiate(Resources.Load("grunt"), 
                                           Vector3(i*15-40, 8, 0), 

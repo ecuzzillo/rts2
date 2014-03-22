@@ -45,7 +45,6 @@ class line_drawer(Component):
 
         if 0:
             for i in range(len(tries)):
-                Debug.Log(tries[i])
 
         uv = array(Vector2, len(pts)*2)
         for i in range(len(pts)*2):
