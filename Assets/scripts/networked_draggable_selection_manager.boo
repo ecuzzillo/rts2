@@ -60,6 +60,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
                                        Camera.main.ScreenToWorldPoint(Input.mousePosition),
                                        Quaternion.identity, 0) cast GameObject)
         new_obj.transform.position.z = 0
+        register_owned(new_obj)
         return new_obj
 
     def set_sprite(dp as MonoBehaviour, 

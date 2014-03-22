@@ -43,9 +43,6 @@ class line_drawer(Component):
             tries[i*6+4] = mod((i*2-2), len(verts))
             tries[i*6+5] = mod((i*2+1), len(verts))
 
-        if 0:
-            for i in range(len(tries)):
-
         uv = array(Vector2, len(pts)*2)
         for i in range(len(pts)*2):
             uv[i] = Vector2(i%2, i%2)

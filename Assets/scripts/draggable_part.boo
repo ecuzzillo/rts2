@@ -27,7 +27,6 @@ class draggable_part(MonoBehaviour):
         mouse_down = false
         inited = false
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
-        sel_mgr.register_owned(self.gameObject)
 
     def Update():
         if not inited:
