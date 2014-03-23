@@ -104,6 +104,8 @@ class grunt_movement(MonoBehaviour):
             die()
 
     def die():
+        #if self.gameObject.GetInstanceID() in sel_mgr.owned:
+        #    sel_mgr.owned.Remove(self.gameObject.GetInstanceID())
         Destroy(self.gameObject)
 
     def select_guns():
@@ -112,7 +114,7 @@ class grunt_movement(MonoBehaviour):
     def target_guns(obj as GameObject):
         guns as (Component) = select_guns()
         for gun as gun_movement in guns:
-            gun.gun_target = obj
+            gun.gun_target = obj.networkView.viewID
 
     def get_mount_path() as string:
         str as string = ""

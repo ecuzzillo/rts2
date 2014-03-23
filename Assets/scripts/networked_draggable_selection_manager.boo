@@ -131,7 +131,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
             for i in range(len(connector_objs)):
                 c = (connector_objs[i] cast draggable_part)
 
-                if c.gameObject.GetInstanceID() in owned:
+                if c != null and c.gameObject.GetInstanceID() in owned:
                     if c.is_core:
                         grunt = make_grunt_tree(c, sel_mgr)
 

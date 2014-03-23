@@ -156,6 +156,6 @@ class selection_manager(MonoBehaviour):
 
     def handle_right_click(obj as GameObject):
         for selected_obj in selected:
-            component = (selected_obj cast GameObject).GetComponent[of gun_movement]()
+            component = (selected_obj cast GameObject).GetComponent[of grunt_movement]()
             if component != null:
-                component.gun_target = obj
+                component.target_guns(obj)
