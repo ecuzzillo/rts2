@@ -13,9 +13,11 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public close_enough as bool
     public selected as List
     public selectednesses as List
+    public part_counter as int
 
     def constructor():
         owned = {}
+        part_counter = 8
 
     def Start():
         selected = []
@@ -55,13 +57,17 @@ class networked_draggable_selection_manager(MonoBehaviour):
         (the_obj cast GameObject).GetComponent[of selectedness_obj]().game_object = obj.gameObject
         selectednesses.Add(the_obj)
 
-    def make_part_at_cursor():
-        new_obj = (Network.Instantiate(Resources.Load("block_part"),
-                                       Camera.main.ScreenToWorldPoint(Input.mousePosition),
-                                       Quaternion.identity, 0) cast GameObject)
-        new_obj.transform.position.z = 0
-        register_owned(new_obj)
-        return new_obj
+    def make_part_at_cursor() as GameObject:
+        if part_counter > 0:
+            new_obj = (Network.Instantiate(Resources.Load("block_part"),
+                                           Camera.main.ScreenToWorldPoint(Input.mousePosition),
+                                           Quaternion.identity, 0) cast GameObject)
+            new_obj.transform.position.z = 0
+            register_owned(new_obj)
+            part_counter -= 1
+            return new_obj
+        else:
+            return null
 
     def set_sprite(dp as MonoBehaviour, 
                    s as Sprite):
@@ -69,6 +75,8 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
     def make_core():
         new_obj = make_part_at_cursor()
+        if new_obj == null:
+            return null
         dp = new_obj.GetComponent[of draggable_part]()
         dp.connectors = [[Vector3(0.5,0,0),
                           Vector3(1,0,0)],
@@ -82,10 +90,14 @@ class networked_draggable_selection_manager(MonoBehaviour):
         dp.is_core = true
         dp.set_sprname("red-block")
         set_sprite(dp, make_sprite("red-block"))
+        return new_obj
 
 
     def make_gun():
         new_obj = make_part_at_cursor()
+        if new_obj == null:
+            return null
+
         dp = new_obj.GetComponent[of draggable_part]()
         dp.set_sprname("gun")
         set_sprite(dp, make_sprite("gun"))
@@ -94,6 +106,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         dp.inited = false
         dp.is_core = false
         dp.grunt_prefab_name = "gun_obj"
+        return new_obj
 
     def make_grunt_tree(dp as draggable_part, 
                         sel_mgr as selection_manager) as grunt_movement:
