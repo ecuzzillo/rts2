@@ -234,6 +234,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1058387053}
   - 114: {fileID: 1058387052}
+  - 148: {fileID: 1058387054}
   m_Layer: 0
   m_Name: netw_draggable_sel_mgr
   m_TagString: Untagged
@@ -258,6 +259,8 @@ MonoBehaviour:
   prev_selected: {fileID: 0}
   close_enough: 0
   part_counter: 7
+  ready: 0
+  other_ready: 0
 --- !u!4 &1058387053
 Transform:
   m_ObjectHideFlags: 0
@@ -269,6 +272,18 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!148 &1058387054
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1058387051}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1058387053}
+  m_ViewID:
+    m_ID: 1
+    m_Type: 1
 --- !u!1 &1144174833
 GameObject:
   m_ObjectHideFlags: 0

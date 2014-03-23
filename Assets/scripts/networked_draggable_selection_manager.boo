@@ -14,10 +14,14 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public selected as List
     public selectednesses as List
     public part_counter as int
+    public ready as bool
+    public other_ready as bool
 
     def constructor():
         owned = {}
         part_counter = 8
+        ready = false
+        other_ready = false
 
     def Start():
         selected = []
@@ -127,6 +131,10 @@ class networked_draggable_selection_manager(MonoBehaviour):
         Network.Destroy(dp.networkView.viewID)
 
         return new_grunt
+        
+    [RPC]
+    def set_other_ready(val as bool):
+        other_ready = val
 
     def Update():
         if Input.GetKeyDown("c"):
@@ -136,6 +144,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
         if Input.GetKeyDown("u"):
             make_gun()
         if Input.GetKeyDown("g"):
+            ready = true
+            networkView.RPC("set_other_ready", RPCMode.Others, true)
+        if ready and other_ready:
             sel_mgr = (Instantiate(Resources.Load("selection_manager_obj"),
                                    Vector3(0,0,0),
                                    Quaternion.identity)
