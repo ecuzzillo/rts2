@@ -88,20 +88,23 @@ class grunt_movement(MonoBehaviour):
 
         return blah
 
-
-    def damage(damage_amt as int):
-        update_health(-1 * damage_amt)
+    def damage(damage_amt as int) as bool:
+        ret = update_health(-1 * damage_amt)
+        networkView.RPC("RPC_damage", RPCMode.Others, damage_amt)
+        return ret
 
     [RPC]
     def RPC_damage(damage_amt as int):
         update_health(-1 * damage_amt)
 
-    def update_health(amt as int):
+    def update_health(amt as int) as bool:
         health += amt
         if health > max_health:
             health = max_health
         elif health <= 0:
             die()
+            return true
+        return false
 
     def die():
         #if self.gameObject.GetInstanceID() in sel_mgr.owned:
@@ -115,6 +118,7 @@ class grunt_movement(MonoBehaviour):
         guns as (Component) = select_guns()
         for gun as gun_movement in guns:
             gun.gun_target = obj.networkView.viewID
+            gun.target_valid = true
 
     def get_mount_path() as string:
         str as string = ""
