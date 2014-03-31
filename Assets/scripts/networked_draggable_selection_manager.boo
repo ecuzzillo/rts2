@@ -16,12 +16,15 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public part_counter as int
     public ready as bool
     public other_ready as bool
+    public ground as GameObject
+    public texture as Texture2D
 
     def constructor():
         owned = {}
         part_counter = 8
         ready = false
         other_ready = false
+        prev_closest_info = []
 
     def Start():
         selected = []
@@ -30,6 +33,8 @@ class networked_draggable_selection_manager(MonoBehaviour):
         max_force = 4.0
         prev_held = false
         this_held = false
+        ground = GameObject.Find("Ground")
+        texture = ground.renderer.material.mainTexture cast Texture2D
 
     def register_owned(obj as Object):
         owned[obj.GetInstanceID()] = true
@@ -55,6 +60,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
             Destroy(s)
         selectednesses = []
         selected.Add(obj)
+        
         the_obj = Instantiate(Resources.Load("selectedness_obj"), 
                               obj.transform.position, 
                               Quaternion.identity)
@@ -105,8 +111,8 @@ class networked_draggable_selection_manager(MonoBehaviour):
         dp = new_obj.GetComponent[of draggable_part]()
         dp.set_sprname("gun")
         set_sprite(dp, make_sprite("gun"))
-        dp.connectors = [[Vector3(0.5,0,0),
-                          Vector3(1,0,0)]]
+        dp.connectors = [[Vector3(0,-1,0),
+                          Vector3(0,1,0)]]
         dp.inited = false
         dp.is_core = false
         dp.grunt_prefab_name = "gun_obj"
@@ -137,6 +143,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         other_ready = val
 
     def Update():
+        draw_shit()
         if Input.GetKeyDown("c"):
             make_core()
         if Input.GetKeyDown("r"):
@@ -163,17 +170,49 @@ class networked_draggable_selection_manager(MonoBehaviour):
                 Destroy(s)
             Destroy(self)
 
+    def world_space_to_texture_space(position as Vector3):
+        bounds = ground.renderer.bounds
+        texture_space_x = ((position.x - bounds.min.x) / (bounds.max.x - bounds.min.x)) * texture.width
+        texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * texture.height
+        return ((texture_space_x cast int), (texture_space_y cast int))
+
+    def apply_connector_visibility(connector as draggable_part, pixels as (Color)):
+        location = connector.transform.position
+        texture_location = world_space_to_texture_space(location)
+        for i in range(texture.height):
+            for j in range(texture.width):
+                index = i * texture.width + j
+                pixels[index].a = Mathf.Min(pixels[index].a, 1 - 1.0 / ((i-(texture_location[1]))**2 + (j-(texture_location[0]))**2 + 1) ** 0.4)
+
+    def draw_shit():
+        pixels = texture.GetPixels()
+        texture_space_origin = Vector3(texture.width / 2.0,
+                                       texture.height / 2.0,
+                                       0)
+
+        for i in range(len(pixels)):
+            pixels[i].r = 0
+            pixels[i].g = 0
+            pixels[i].b = 0
+            pixels[i].a = 1
+        for connector as draggable_part in connector_objs:
+            apply_connector_visibility(connector, pixels)
+        texture.SetPixels(pixels)
+        texture.Apply()
+
     def FixedUpdate():
         prev_held = this_held
         this_held = false
+
         if len(selected) > 0:
             obji = (selected[0] cast draggable_part)
+            closest_ind = -1
+            closest_subind = -1
+            closest_dist = -1
+            closest_pos = Vector3(0,0,0)
+            closest_cntr_ind = -1
+
             for j in range(len(obji.connectors)):
-                closest_ind = -1
-                closest_subind = -1
-                closest_dist = -1
-                closest_pos = Vector3(0,0,0)
-                closest_cntr_ind = -1
 
                 jpos = obji.transform.\
                        TransformPoint((obji.connectors[j] cast List)[0])
@@ -201,15 +240,15 @@ class networked_draggable_selection_manager(MonoBehaviour):
                         force_mag = max_force
                     else:
                         force_mag = Mathf.Min(max_force, 1/closest_dist**2)
-                    obji.rigidbody2D.\
-                        AddForceAtPosition(force_mag*((closest_pos - jpos).normalized), 
-                                           jpos)
+                    if 0:
+                        obji.rigidbody2D.\
+                            AddForceAtPosition(force_mag*((closest_pos - jpos).normalized), 
+                                               jpos)
                     prev_closest_info = [closest_dist, 
                                          closest_cntr_ind, 
                                          closest_ind, 
                                          closest_subind]
                     close_enough = true
-                    break
                 else:
                     close_enough = false
                     prev_closest_info = [-1, -1, -1, -1]
@@ -218,12 +257,11 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
             prev_selected = obji
 
-        if prev_held and not this_held:
+        if len(prev_closest_info) > 0:
             closest_dist = prev_closest_info[0]
             closest_cntr_ind = prev_closest_info[1]
             closest_ind = prev_closest_info[2]
             closest_subind = prev_closest_info[3]
-
 
             if closest_ind != -1:
 
@@ -243,6 +281,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
                     prev_selected.rigidbody2D.velocity = Vector3(0,0,0)
                     prev_selected.rigidbody2D.angularVelocity = 0
-                    prev_selected.transform.parent = close_obj.transform
-                    prev_selected.attached = true
-                    prev_selected.sync_mount()
+                    if prev_held and not this_held:
+                        Debug.Log("attaching!")
+                        prev_selected.transform.parent = close_obj.transform
+                        prev_selected.attached = true
+                        prev_selected.sync_mount()
+

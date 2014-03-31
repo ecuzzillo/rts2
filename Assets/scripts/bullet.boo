@@ -5,13 +5,13 @@ class bullet(MonoBehaviour):
     public velocity as Vector3
     public speed as single
     public owned as bool
-    public static BULLET_DAMAGE = 1
+    public damage as single
 
     def constructor():
         owned = false
         velocity = Vector3(0, 0, 0)
-        speed = 3
-        bullet_damage = 1
+        speed = 0.02
+        damage = 1
 
     def FixedUpdate():
         transform.position += velocity
@@ -22,7 +22,7 @@ class bullet(MonoBehaviour):
             not other.gameObject.GetInstanceID() in sel_mgr.owned and
             owned):
             unit_attrs = other.gameObject.GetComponent[of grunt_movement]()
-            if unit_attrs.damage(BULLET_DAMAGE):
+            if unit_attrs == null or unit_attrs.damage(damage):
                 shooter.GetComponent[of gun_movement]().target_valid = false
             
             Network.Destroy(self.networkView.viewID)

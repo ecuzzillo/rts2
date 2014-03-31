@@ -11,6 +11,8 @@ class selection_manager(MonoBehaviour):
     public mouse as mouse_follow
     public waypoint_indicator as GameObject
     public ld as line_drawer
+    public ground as GameObject
+    public texture as Texture2D
 
     def constructor():
         selected = []
@@ -24,11 +26,43 @@ class selection_manager(MonoBehaviour):
         waypoint_indicator = GameObject("garbage")
         transform.position = Vector3(-100,-100,0)
         mouse = FindObjectOfType(mouse_follow)
+        ground = GameObject.Find("Ground")
+        texture = ground.renderer.material.mainTexture cast Texture2D
 
     def Update():
+        update_fog_of_war()
         dragging_selection_update()
         mouse_click_update()
         keyboard_update()
+
+    def world_space_to_texture_space(position as Vector3):
+        bounds = ground.renderer.bounds
+        texture_space_x = ((position.x - bounds.min.x) / (bounds.max.x - bounds.min.x)) * texture.width
+        texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * texture.height
+        return ((texture_space_x cast int), (texture_space_y cast int))
+
+    def apply_connector_visibility(connector as grunt_movement, pixels as (Color)):
+        location = connector.transform.position
+        texture_location = world_space_to_texture_space(location)
+        for i in range(texture.height):
+            for j in range(texture.width):
+                index = i * texture.width + j
+                pixels[index].a = Mathf.Min(pixels[index].a, 1 - 1.0 / ((i-(texture_location[1]))**2 + (j-(texture_location[0]))**2 + 1) ** 0.4)
+
+    def update_fog_of_war():
+        pixels = texture.GetPixels()
+        texture_space_origin = Vector3(texture.width / 2.0,
+                                       texture.height / 2.0,
+                                       0)
+        for i in range(len(pixels)):
+            pixels[i].r = 0
+            pixels[i].g = 0
+            pixels[i].b = 0
+            pixels[i].a = 1
+        for connector as grunt_movement in connector_objs:
+            apply_connector_visibility(connector, pixels)
+        texture.SetPixels(pixels)
+        texture.Apply()
 
     # Check for mass selection
     def dragging_selection_update():
@@ -85,20 +119,23 @@ class selection_manager(MonoBehaviour):
 
         if Input.GetMouseButtonUp(1):
             if mouse.hover_obj != null:
-                target_guns(mouse.hover_obj)
+                handle_right_click(mouse.hover_obj)
             elif selected:
                 set_waypoints()
 
     # Check for keyboard input
     def keyboard_update():
+        inc = 1
         if Input.GetKey("right"):
-            Camera.main.transform.position.x += 0.25
+            Camera.main.transform.position.x += inc
         if Input.GetKey("left"):
-            Camera.main.transform.position.x -= 0.25
+            Camera.main.transform.position.x -= inc
         if Input.GetKey("up"):
-            Camera.main.transform.position.y += 0.25
+            Camera.main.transform.position.y += inc
         if Input.GetKey("down"):
-            Camera.main.transform.position.y -= 0.25
+            Camera.main.transform.position.y -= inc
+        if Input.GetKeyDown(KeyCode.Escape):
+            Application.LoadLevel(0)
 
 
     def OnTriggerEnter2D(c as Collider2D):
@@ -155,7 +192,10 @@ class selection_manager(MonoBehaviour):
             selectednesses.Add(the_obj)
 
     def handle_right_click(obj as GameObject):
-        for selected_obj in selected:
-            component = (selected_obj cast GameObject).GetComponent[of grunt_movement]()
-            if component != null:
-                component.target_guns(obj)
+        if obj not in owned:
+            for selected_obj as GameObject in selected:
+                #so = (selected_obj cast GameObject)
+                component = selected_obj.GetComponent[of grunt_movement]()
+                if component != null:
+                    component.target_guns(obj)
+

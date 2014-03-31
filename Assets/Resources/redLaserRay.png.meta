@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1bd6a1c6f0ae44ac4bbaa6f9787bb864
+guid: 533fa84ed4d1f492ab1cbff999f40400
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -24,9 +24,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: 1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -41,11 +41,7 @@ TextureImporter:
   buildTargetSettings:
   - buildTarget: iPhone
     maxTextureSize: 1024
-    textureFormat: 7
-    compressionQuality: 50
-  - buildTarget: Standalone
-    maxTextureSize: 1024
-    textureFormat: 5
+    textureFormat: 13
     compressionQuality: 50
   spriteSheet:
     sprites: []

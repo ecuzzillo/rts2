@@ -11,16 +11,21 @@ class draggable_part(MonoBehaviour):
     public attached as bool
     public grunt_prefab_name as string
     public sprite_name as string
+    public clicked_orient as Quaternion
 
     def constructor():
         grunt_prefab_name = "grunt"
         sprite_name = "arrow-block-corners"
         is_core = false
         attached = false
-        connectors = [[Vector3(0.5,0,0),
+        connectors = [[Vector3(1,0,0),
                        Vector3(1,0,0)],
-                      [Vector3(-0.5,0,0),
-                       Vector3(-1, 1, 0)]]
+                      [Vector3(-1,0,0),
+                       Vector3(-1, 0, 0)],
+                      [Vector3(0,1,0),
+                       Vector3(0, 1, 0)],
+                      [Vector3(0,-1,0),
+                       Vector3(0, -1, 0)]]
 
     virtual def Start():
         sel_mgr = FindObjectOfType(networked_draggable_selection_manager)
@@ -38,28 +43,37 @@ class draggable_part(MonoBehaviour):
             sel_mgr.connector_objs.Add(self)
             inited = true
 
-        if mouse_down and self in sel_mgr.selected:
-            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition)
-            transform.position.z = 0
-
-            if Input.GetKeyDown("right"):
-                transform.Rotate(Vector3(0,0,90))
-            if Input.GetKeyDown("left"):
-                transform.Rotate(Vector3(0,0,-90))
-
+        
     def FixedUpdate():
         rigidbody2D.AddTorque(-rigidbody2D.angularVelocity/2)
         rigidbody2D.AddForce(-rigidbody2D.velocity*2)
+
+        if mouse_down and not Input.GetMouseButton(0):
+            sel_mgr.selected = []
+            mouse_down = false
+
+        
+        if mouse_down and self in sel_mgr.selected:
+            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            transform.position.z = 0
+            transform.rotation = clicked_orient
+
+            if Input.GetKeyDown("right"):
+                transform.Rotate(Vector3(0,0,90))
+                clicked_orient = transform.rotation
+                
+            if Input.GetKeyDown("left"):
+                transform.Rotate(Vector3(0,0,-90))
+                clicked_orient = transform.rotation
+
+
 
     def OnTriggerStay2D(other as Collider2D):
         if other == mouse_coll:
             if not mouse_down and Input.GetMouseButtonDown(0) and len(sel_mgr.selected) == 0:
                 sel_mgr.handle_click(self)
+                clicked_orient = transform.rotation
                 mouse_down = true
-
-            elif mouse_down and not Input.GetMouseButton(0):
-                sel_mgr.selected = []
-                mouse_down = false
 
     def OnTriggerEnter2D(other as Collider2D):
         OnTriggerStay2D(other)

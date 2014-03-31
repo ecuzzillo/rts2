@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1bd6a1c6f0ae44ac4bbaa6f9787bb864
+guid: 49b211919b03b413395e93d265ece375
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -16,7 +16,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: .25
     normalMapFilter: 0
-  isReadable: 1
+  isReadable: 0
   grayScaleToAlpha: 0
   generateCubemap: 0
   seamlessCubemap: 0
@@ -37,15 +37,11 @@ TextureImporter:
   spritePivot: {x: .5, y: .5}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
-  textureType: 5
+  textureType: 8
   buildTargetSettings:
   - buildTarget: iPhone
     maxTextureSize: 1024
-    textureFormat: 7
-    compressionQuality: 50
-  - buildTarget: Standalone
-    maxTextureSize: 1024
-    textureFormat: 5
+    textureFormat: -2
     compressionQuality: 50
   spriteSheet:
     sprites: []

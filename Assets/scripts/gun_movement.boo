@@ -30,8 +30,17 @@ class gun_movement(grunt_movement):
                                             0) as GameObject
             bullet_attrs = my_bullet.GetComponent[of bullet]()
             bullet_attrs.owned = true
-            bullet_attrs.velocity = (my_network_view.gameObject.transform.position - 
-                                     transform.position).normalized * bullet_attrs.speed
+            normed_vel = (my_network_view.gameObject.transform.position - 
+                          transform.position).normalized
+            Debug.Log("bullet attrs speed: "+bullet_attrs.speed)
+            bullet_attrs.velocity = normed_vel * bullet_attrs.speed
+            bullet_attrs.damage = (transform.position - 
+                                   get_parent().transform.position).magnitude / 2
+            my_bullet.transform.localScale *= bullet_attrs.damage
+            my_bullet.transform.eulerAngles.z = Mathf.Atan2(-normed_vel.y, 
+                                                            -normed_vel.x) * Mathf.Rad2Deg
             bullet_attrs.shooter = gameObject
             cooling_down = true
             cooldown_timer = GUN_COOLDOWN
+            
+            GameObject.Find("audio_source").GetComponent[of AudioSource]().Play()
