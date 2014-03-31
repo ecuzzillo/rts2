@@ -40,7 +40,7 @@ class draggable_part(MonoBehaviour):
 
             for i in range(len(connectors)):
                 (connectors[i] cast List)[0] = ((connectors[i] cast List)[0] cast Vector3) * s.x
-            sel_mgr.connector_objs.Add(self)
+            #sel_mgr.connector_objs.Add(self)
             inited = true
 
         

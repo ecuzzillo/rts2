@@ -13,8 +13,10 @@ class selection_manager(MonoBehaviour):
     public ld as line_drawer
     public ground as GameObject
     public texture as Texture2D
+    public part_counter as int
 
     def constructor():
+        part_counter = 8
         selected = []
         selectednesses = []
         dragging = false
@@ -41,8 +43,8 @@ class selection_manager(MonoBehaviour):
         texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * texture.height
         return ((texture_space_x cast int), (texture_space_y cast int))
 
-    def apply_connector_visibility(connector as grunt_movement, pixels as (Color)):
-        location = connector.transform.position
+    def apply_unit_visibility(unit as GameObject, pixels as (Color)):
+        location = unit.transform.position
         texture_location = world_space_to_texture_space(location)
         for i in range(texture.height):
             for j in range(texture.width):
@@ -59,10 +61,48 @@ class selection_manager(MonoBehaviour):
             pixels[i].g = 0
             pixels[i].b = 0
             pixels[i].a = 1
-        for connector as grunt_movement in connector_objs:
-            apply_connector_visibility(connector, pixels)
+        for obj as GameObject in owned.Values:
+            apply_unit_visibility(obj, pixels)
         texture.SetPixels(pixels)
         texture.Apply()
+
+    def set_sprite(dp as MonoBehaviour, s as Sprite):
+        (dp.renderer cast SpriteRenderer).sprite = s
+
+    def make_sprite(name as string):
+        bloo = Instantiate(Resources.Load(name),
+                           Vector3(0,0,0),
+                           Quaternion.identity) cast Texture2D
+        blah = Sprite.Create(bloo,
+                             Rect(0,0,bloo.width,bloo.height),
+                             Vector2(0.5,0.5),
+                             100)
+        blah.bounds.center.x = 0
+        blah.bounds.center.y = 0
+        blah.hideFlags = HideFlags.None
+
+        return blah
+
+    def make_unit_at_cursor() as GameObject:
+        if part_counter > 0:
+            new_obj = (Network.Instantiate(Resources.Load("grunt"),
+                                           Camera.main.ScreenToWorldPoint(Input.mousePosition),
+                                           Quaternion.identity, 0) cast GameObject)
+            new_obj.transform.position.z = 0
+            register_owned(new_obj)
+            part_counter -= 1
+            return new_obj
+        else:
+            return null
+
+    def make_unit():
+        new_obj = make_unit_at_cursor()
+        if new_obj == null:
+            return null
+        dp = new_obj.GetComponent[of grunt_movement]()
+        dp.set_sprname("red-block")
+        set_sprite(dp, make_sprite("red-block"))
+        return new_obj
 
     # Check for mass selection
     def dragging_selection_update():
@@ -88,8 +128,6 @@ class selection_manager(MonoBehaviour):
                              [selection_topleft, p1, selection_botright, p3],
                              5, 
                              true)
-            
-
         elif dragging:
             transform.position \
                 = (selection_topleft + selection_botright)/2
@@ -125,18 +163,10 @@ class selection_manager(MonoBehaviour):
 
     # Check for keyboard input
     def keyboard_update():
-        inc = 1
-        if Input.GetKey("right"):
-            Camera.main.transform.position.x += inc
-        if Input.GetKey("left"):
-            Camera.main.transform.position.x -= inc
-        if Input.GetKey("up"):
-            Camera.main.transform.position.y += inc
-        if Input.GetKey("down"):
-            Camera.main.transform.position.y -= inc
+        if Input.GetKeyDown("c"):
+            make_unit()
         if Input.GetKeyDown(KeyCode.Escape):
             Application.LoadLevel(0)
-
 
     def OnTriggerEnter2D(c as Collider2D):
         if collider_active:
@@ -174,7 +204,7 @@ class selection_manager(MonoBehaviour):
                                          Quaternion.identity)
 
     def register_owned(obj as Object):
-        owned[obj.GetInstanceID()] = true
+        owned[obj.GetInstanceID()] = obj
 
     def handle_left_click(obj as GameObject):
         handle_left_click(obj, true)
@@ -192,7 +222,7 @@ class selection_manager(MonoBehaviour):
             selectednesses.Add(the_obj)
 
     def handle_right_click(obj as GameObject):
-        if obj not in owned:
+        if obj.GetInstanceID() not in owned:
             for selected_obj as GameObject in selected:
                 #so = (selected_obj cast GameObject)
                 component = selected_obj.GetComponent[of grunt_movement]()
