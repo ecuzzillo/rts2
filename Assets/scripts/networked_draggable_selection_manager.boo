@@ -105,18 +105,26 @@ class networked_draggable_selection_manager(MonoBehaviour):
         for i in range(texture.height):
             for j in range(texture.width):
                 index = i * texture.width + j
-                pixels[index].a = Mathf.Min(pixels[index].a, 1 - 1.0 / ((i-(texture_location[1]))**2 + (j-(texture_location[0]))**2 + 1) ** 0.4)
+                pixels[index].a = Mathf.Min(pixels[index].a, 
+                                            1 - 1.0 / ((i-texture_location[1])**2 + 
+                                                       (j-texture_location[0])**2 + 1) ** 0.4)
 
     def update_fog_of_war():
-        pixels = texture.GetPixels()
-        texture_space_origin = Vector3(texture.width / 2.0,
-                                       texture.height / 2.0,
-                                       0)
+        if 0:
+            pixels = texture.GetPixels()
+            texture_space_origin = Vector3(texture.width / 2.0,
+                                           texture.height / 2.0,
+                                           0)
 
-        for i in range(len(pixels)):
-            pixels[i].r = 0
-            pixels[i].g = 0
-            pixels[i].b = 0
-            pixels[i].a = 1
-        texture.SetPixels(pixels)
-        texture.Apply()
+            for i in range(len(pixels)):
+                pixels[i].r = 0
+                pixels[i].g = 0
+                pixels[i].b = 0
+                pixels[i].a = 1
+            texture.SetPixels(pixels)
+            texture.Apply()
+        else:
+            mymesh = ground.GetComponent[of MeshFilter]()
+            c = Color(0.0, 0.0, 0.0, 1.0)
+            for i in range(len(mymesh.mesh.colors)):
+                mymesh.mesh.colors[i] = c
