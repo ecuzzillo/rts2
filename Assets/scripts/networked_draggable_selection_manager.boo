@@ -11,12 +11,14 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public other_ready as bool
     public ground as GameObject
     public texture as Texture2D
+    public conns as List
 
     def constructor():
         owned = {}
         part_counter = 8
         ready = false
         other_ready = false
+        conns = []
 
     def Start():
         selected = []
@@ -63,6 +65,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
             new_obj.transform.position.z = 0
             register_owned(new_obj)
             part_counter -= 1
+            conns.Add(new_obj)
             return new_obj
         else:
             return null
@@ -90,6 +93,8 @@ class networked_draggable_selection_manager(MonoBehaviour):
         if Input.GetKeyDown("g"):
             ready = true
             networkView.RPC("set_other_ready", RPCMode.Others, true)
+        if Input.GetKeyDown("c"):
+            make_unit()
         if ready and other_ready:
             pass
 
@@ -121,6 +126,10 @@ class networked_draggable_selection_manager(MonoBehaviour):
                 pixels[i].g = 0
                 pixels[i].b = 0
                 pixels[i].a = 1
+
+            for c as GameObject in conns:
+                apply_connector_visibility(c.GetComponent[of draggable_part](), pixels)
+
             texture.SetPixels(pixels)
             texture.Apply()
         else:
