@@ -100,17 +100,17 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
     def world_space_to_texture_space(position as Vector3):
         bounds = ground.renderer.bounds
-        texture_space_x = ((position.x - bounds.min.x) / (bounds.max.x - bounds.min.x)) * texture.width
-        texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * texture.height
+        texture_space_x = ((position.x - bounds.min.x) / (bounds.max.x - bounds.min.x)) * 10
+        texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * 10
         return ((texture_space_x cast int), (texture_space_y cast int))
 
     def apply_connector_visibility(connector as draggable_part, pixels as (Color)):
         location = connector.transform.position
         texture_location = world_space_to_texture_space(location)
-        for i in range(texture.height):
-            for j in range(texture.width):
-                index = i * texture.width + j
-                pixels[index].a = Mathf.Min(pixels[index].a, 
+        for i in range(10):
+            for j in range(10):
+                index = i * 10 + j
+                pixels[index].r = Mathf.Max(pixels[index].r, 
                                             1 - 1.0 / ((i-texture_location[1])**2 + 
                                                        (j-texture_location[0])**2 + 1) ** 0.4)
 
@@ -122,9 +122,9 @@ class networked_draggable_selection_manager(MonoBehaviour):
                                            0)
 
             for i in range(len(pixels)):
-                pixels[i].r = 0
+                pixels[i].r = 1
                 pixels[i].g = 0
-                pixels[i].b = 0
+                pixels[i].b = 1
                 pixels[i].a = 1
 
             for c as GameObject in conns:
@@ -134,6 +134,12 @@ class networked_draggable_selection_manager(MonoBehaviour):
             texture.Apply()
         else:
             mymesh = ground.GetComponent[of MeshFilter]()
-            c = Color(0.0, 0.0, 0.0, 1.0)
+            c = Color(255.0, 0.0, 0.0, 255.0)
             for i in range(len(mymesh.mesh.colors)):
                 mymesh.mesh.colors[i] = c
+
+            Debug.Log(len(mymesh.mesh.colors))
+
+            for c as GameObject in conns:
+                apply_connector_visibility(c.GetComponent[of draggable_part](), mymesh.mesh.colors)
+
