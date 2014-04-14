@@ -8,6 +8,11 @@
 }
 
 SubShader {
+    ZWrite Off
+    Alphatest Greater 0
+    Tags {Queue=Transparent}
+    Blend SrcAlpha OneMinusSrcAlpha 
+    ColorMask RGB
     Pass {
         Material {
             Shininess [_Shininess]
@@ -27,7 +32,7 @@ SubShader {
     }
 }
 
-Fallback " VertexLit", 1
+Fallback "Alpha/VertexLit", 1
 }
 //     Category {
 //         BindChannels { 
