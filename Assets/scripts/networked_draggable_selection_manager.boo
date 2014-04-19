@@ -20,64 +20,12 @@ class networked_draggable_selection_manager(MonoBehaviour):
         other_ready = false
         conns = []
 
-    def make_plane():
-        mesh = Mesh()
-
-        h = 90
-        w = 160
-        
-        vs = array(Vector3, h*w)
-        uv = array(Vector2, len(vs))
-        
-        for i in range(h):
-            for j in range(w):
-                ind = i*w + j
-                vs[ind] = Vector3(i-h/2.0, j-w/2.0, 0.0)
-                uv[ind] = Vector2(i*1.0/h, j*1.0/w)
-
-        tries = array(int, (h-1)*(w-1)*6)
-        
-        for i in range(h-1):
-            for j in range(w-1):
-                tr_ind= i*(w-1) + j
-                vind = i*w+j
-                vind2 = (i+1)*w + j+1
-                tries[ind] = vind
-                tries[ind+1] = vind2
-                tries[ind+2] = vind + 1
-                tries[ind+3] = vind
-                tries[ind+4] = (i+1)*w + j
-                tries[ind+5] = vind2
-
-        mesh.vertices = vs
-        mesh.uv = uv
-        mesh.triangles = tries
-
-        return mesh
 
     def Start():
         selected = []
         selectednesses = []
-
         ground = GameObject.Find("Ground")
-
-        mymesh = ground.GetComponent[of MeshFilter]()
-
-        texture = ground.renderer.material.mainTexture cast Texture2D
-
-        pixels = texture.GetPixels()
-        for i in range(len(pixels)):
-            pixels[i].r = 0
-            pixels[i].g = 0
-            pixels[i].b = 0
-            pixels[i].a = 1
-            
-
-        texture.SetPixels(pixels)
-        texture.Apply()
-
-        mymesh.mesh = make_plane()
-
+        mesh_utils.set_black_plane(ground)
 
     def register_owned(obj as Object):
         owned[obj.GetInstanceID()] = true
@@ -165,14 +113,14 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
         for i in range(len(vertices)):
             pixels[i].a = Mathf.Min(pixels[i].a,
-                                    1.0 - 1.0 / ((vertices[i].z-location.x)**2.0 + 
-                                                 (vertices[i].x+location.y)**2.0 + 1.0))
+                                    1.0 - 1.0 / ((vertices[i].y-location.y/2.0)**2.0 + 
+                                                 (vertices[i].x-location.x/2.0)**2.0 + 1.0)**0.3)
             
         return pixels
     def update_fog_of_war():
         mymesh = ground.GetComponent[of MeshFilter]()
+        colors = array(Color, len(mymesh.mesh.vertices))
         c = Color(0,0,0,1.0)
-        colors = array(Color, len(mymesh.mesh.colors))
         for i in range(len(mymesh.mesh.colors)):
             colors[i] = c
 

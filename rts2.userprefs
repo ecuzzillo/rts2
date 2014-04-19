@@ -1,9 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Temp/Compiled-Lightmap-VertexLit.shader">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/VertexColorUnlit.shader">
     <Files>
-      <File FileName="Temp/Compiled-Lightmap-VertexLit.shader" Line="1" Column="1" />
-      <File FileName="Assets/scripts/networked_draggable_selection_manager.boo" Line="1" Column="1" />
+      <File FileName="Assets/scripts/networked_draggable_selection_manager.boo" Line="195" Column="1" />
+      <File FileName="Assets/VertexColorUnlit.shader" Line="88" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
