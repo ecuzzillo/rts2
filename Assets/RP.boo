@@ -1,8 +1,6 @@
 ﻿import UnityEngine
-
-class grunt_movement(MonoBehaviour): 
+class RP(MonoBehaviour): 
     def Start ():
         pass
-    
     def Update ():
         pass
