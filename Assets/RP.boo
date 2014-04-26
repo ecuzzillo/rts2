@@ -1,6 +1,7 @@
 ﻿import UnityEngine
+
 class RP(MonoBehaviour): 
-    def Start ():
+    def Start():
         pass
-    def Update ():
+    def Update():
         pass
