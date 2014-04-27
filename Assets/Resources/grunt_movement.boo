@@ -52,20 +52,13 @@ class grunt_movement(MonoBehaviour):
         OnTriggerStay2D(other)
 
     virtual def FixedUpdate():
-        pass
-    virtual def Update():
-        Debug.Log("FixedUpdate")
+        #Debug.Log("FixedUpdate")
         if mouse_down and not Input.GetMouseButton(0):
             sel_mgr.selected = []
             mouse_down = false
 
 
         if is_core:
-            if path == null:
-                Debug.Log("path is null")
-            else:
-                Debug.Log("path len is "+len(path))
-
             diff = target - transform.position
             mag = diff.magnitude
             size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x
@@ -81,29 +74,28 @@ class grunt_movement(MonoBehaviour):
                 transform.position.z = 0
             else:
                 d = (transform.position - target).magnitude
-                Debug.Log("dist to target is"+d)
+                Debug.Log("pos="+transform.position+" target="+target)
                 if path == null and d > 0.5:
-                    Debug.Log("trying to make path not null")
-                    
                     path = path_find.plan(transform.position, 
                                           target, 
                                           3, 
-                                          10)
-                    Debug.Log("is path now null?"+(path == null))
+                                          3)
                 
-                if (path != null and 
-                    len(path) > 0 and 
-                    ((path[0] cast Vector2) - transform.position).magnitude < 0.01):
-                    path = path[1:]
+                if path != null:
+                    if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
+                       path = path[1:] 
+                    if len(path) == 0:
+                        path = null
+                    else:
+                        Debug.Log("start of path is +"+path[-1]+"target is "+path[0])
+                        diff = (path[0] cast Vector2) - transform.position
+                        mag = diff.magnitude
 
-                    diff = (path[0] cast Vector2) - transform.position
-                    mag = diff.magnitude
+                        mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
+                        vel = diff*mul
 
-                    mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
-                    vel = diff*mul
-
-                    transform.position += vel
-                    transform.position.z = 0
+                        transform.position += vel
+                        transform.position.z = 0
                     
 
     def set_sprname(sprname as string):
