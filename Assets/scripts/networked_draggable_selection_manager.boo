@@ -12,6 +12,10 @@ class networked_draggable_selection_manager(MonoBehaviour):
     public ground as GameObject
     public texture as Texture2D
     public conns as List
+    public mouse as mouse_follow
+    public waypoint_indicator as GameObject
+    public ld as line_drawer
+    public collider_active as bool
 
     def constructor():
         owned = {}
@@ -25,10 +29,8 @@ class networked_draggable_selection_manager(MonoBehaviour):
         selected = []
         selectednesses = []
         ground = GameObject.Find("Ground")
+        mouse = FindObjectOfType(mouse_follow)
         mesh_utils.set_black_plane(ground)
-
-    def register_owned(obj as Object):
-        owned[obj.GetInstanceID()] = true
 
     def make_sprite(name as string):
         bloo = Instantiate(Resources.Load(name),
@@ -45,7 +47,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         return blah
 
 
-    def handle_click(obj as draggable_part):
+    def handle_click(obj as MonoBehaviour):
         selected = []
         for s in selectednesses:
             Destroy(s)
@@ -60,7 +62,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
     def make_part_at_cursor() as GameObject:
         if part_counter > 0:
-            new_obj = (Network.Instantiate(Resources.Load("block_part"),
+            new_obj = (Network.Instantiate(Resources.Load("grunt"),
                                            Camera.main.ScreenToWorldPoint(Input.mousePosition),
                                            Quaternion.identity, 0) cast GameObject)
             new_obj.transform.position.z = 0
@@ -78,7 +80,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         new_obj = make_part_at_cursor()
         if new_obj == null:
             return null
-        dp = new_obj.GetComponent[of draggable_part]()
+        dp = new_obj.GetComponent[of grunt_movement]()
         dp.inited = false
         dp.is_core = true
         dp.set_sprname("red-block")
@@ -90,6 +92,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         other_ready = val
 
     def Update():
+        mouse_click_update()
         update_fog_of_war()
         if Input.GetKeyDown("g"):
             ready = true
@@ -105,7 +108,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
         texture_space_y = ((position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * 10
         return ((texture_space_x cast int), (texture_space_y cast int))
 
-    def apply_connector_visibility(connector as draggable_part,
+    def apply_connector_visibility(connector as grunt_movement,
                                    vertices as (Vector3), 
                                    pixels as (Color)):
         location = connector.transform.position
@@ -125,8 +128,133 @@ class networked_draggable_selection_manager(MonoBehaviour):
             colors[i] = c
 
         for c as GameObject in conns:
-            colors = apply_connector_visibility(c.GetComponent[of draggable_part](), 
+            colors = apply_connector_visibility(c.GetComponent[of grunt_movement](), 
                                                 mymesh.mesh.vertices, 
                                                 colors)
 
         mymesh.mesh.colors = colors
+    # Check for mass selection
+    def dragging_selection_update():
+        if Input.GetMouseButtonDown(0):
+            dragging = true
+            selection_topleft = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            selection_topleft.z = 0
+
+        if Input.GetMouseButton(0):
+            selection_botright = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+            selection_botright.z = 0
+
+            # fuck this for now
+            if 0:
+                p1 = Vector3(selection_topleft.x, 
+                             selection_botright.y, 
+                             0)
+                p3 = Vector3(selection_botright.x, 
+                             selection_topleft.y, 
+                             0)
+
+                ld.draw_line(gameObject.GetComponent[of MeshFilter](), 
+                             [selection_topleft, p1, selection_botright, p3],
+                             5, 
+                             true)
+        elif dragging:
+            transform.position \
+                = (selection_topleft + selection_botright)/2
+            (collider2D cast BoxCollider2D).size \
+                = selection_botright - selection_topleft
+            # backwards because coords positive is up and right, 
+            # but intuition for dragging is down and right
+            (collider2D cast BoxCollider2D).size.y *= -1 
+
+            dragging = false
+
+            for s in selectednesses:
+                Destroy(s)
+
+            selected = []
+            selectednesses = []
+
+    # Check for mouse clicks
+    def mouse_click_update():
+        if Input.GetMouseButtonUp(0):
+            if mouse.hover_obj != null:
+                handle_left_click(mouse.hover_obj)
+            else:
+                selected = []
+                selectednesses = []
+                collider_active = true
+
+        if Input.GetMouseButtonUp(1):
+            if mouse.hover_obj != null:
+                handle_right_click(mouse.hover_obj)
+            elif selected:
+                set_waypoints()
+
+    # Check for keyboard input
+    def keyboard_update():
+        if Input.GetKeyDown("c"):
+            make_unit()
+        if Input.GetKeyDown(KeyCode.Escape):
+            Application.LoadLevel(0)
+
+    def OnTriggerEnter2D(c as Collider2D):
+        if collider_active:
+            handle_left_click(c.gameObject, false)
+
+    def OnTriggerStay2D(c as Collider2D):
+        if collider_active:
+            transform.position = Vector3(-100,-100,0)
+            (collider2D cast BoxCollider2D).size = Vector2(0.0001,0.0001)
+            collider_active = false
+
+    # For each selected unit, if that unit is a gun, target the argument unit
+    def target_guns(obj as GameObject):
+        for selected_obj in selected:
+            #component = (selected_obj cast GameObject).GetComponent[of gun_movement]()
+            #if component != null:
+            #    component.gun_target = obj
+            component = (selected_obj cast GameObject).GetComponent[of grunt_movement]()
+            component.target_guns(obj)
+
+    # For each selected unit, set the unit's waypoint to the mouse position
+    def set_waypoints():
+        waypoint = Camera.main.ScreenToWorldPoint(Input.mousePosition)
+        waypoint.z = 0
+        for selected_obj in selected:
+            component = (selected_obj cast GameObject).GetComponent[of grunt_movement]()
+            if component != null:
+                component.target = waypoint
+        create_waypoint_indicator(waypoint)
+
+    def create_waypoint_indicator(target):
+        Destroy(waypoint_indicator)
+        waypoint_indicator = Instantiate(Resources.Load("doonk"),
+                                         target,
+                                         Quaternion.identity)
+
+    def register_owned(obj as Object):
+        owned[obj.GetInstanceID()] = obj
+
+    def handle_left_click(obj as GameObject):
+        handle_left_click(obj, true)
+
+    def handle_left_click(obj as GameObject, reset as bool):
+        if owned.ContainsKey(obj.GetInstanceID()):
+            actual_obj = obj.GetComponent[of grunt_movement]().get_parent()
+            selected.Add(actual_obj.gameObject)
+
+            the_obj = Instantiate(Resources.Load("selectedness_obj"), 
+                                  actual_obj.transform.position, 
+                                  Quaternion.identity)
+            (the_obj cast GameObject).GetComponent[of selectedness_obj]().\
+                game_object = actual_obj.gameObject
+            selectednesses.Add(the_obj)
+
+    def handle_right_click(obj as GameObject):
+        if obj.GetInstanceID() not in owned:
+            for selected_obj as GameObject in selected:
+                #so = (selected_obj cast GameObject)
+                component = selected_obj.GetComponent[of grunt_movement]()
+                if component != null:
+                    component.target_guns(obj)
+

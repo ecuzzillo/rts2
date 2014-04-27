@@ -4,22 +4,26 @@ class grunt_movement(MonoBehaviour):
     public vel as Vector3
     public target as Vector3
     public the_doonk as GameObject
-    public sel_mgr as selection_manager
+    public sel_mgr as networked_draggable_selection_manager
     public mouse_coll as Collider2D
+    public mouse_down as bool
     public is_core as bool
     public health as int
     public max_health as int
     public sprite_name as string
+    public path as List
+    public inited as bool
 
     def constructor():
         sprite_name = "arrow-block-corners"
+        mouse_down = false
         is_core = true
         max_health = 5
         health = max_health
 
     def Start():
         the_doonk = GameObject("garbage")
-        sel_mgr = FindObjectOfType(selection_manager)
+        sel_mgr = FindObjectOfType(networked_draggable_selection_manager)
         mouse_coll = FindObjectOfType(mouse_follow).collider2D
         target = transform.position
 
@@ -38,21 +42,69 @@ class grunt_movement(MonoBehaviour):
             stream.Serialize(targ)
             target = targ
 
+    def OnTriggerStay2D(other as Collider2D):
+        if other == mouse_coll:
+            if not mouse_down and Input.GetMouseButtonDown(0) and len(sel_mgr.selected) == 0:
+                sel_mgr.handle_click(self)
+                mouse_down = true
+
+    def OnTriggerEnter2D(other as Collider2D):
+        OnTriggerStay2D(other)
+
     virtual def FixedUpdate():
+        pass
+    virtual def Update():
+        Debug.Log("FixedUpdate")
+        if mouse_down and not Input.GetMouseButton(0):
+            sel_mgr.selected = []
+            mouse_down = false
+
+
         if is_core:
+            if path == null:
+                Debug.Log("path is null")
+            else:
+                Debug.Log("path len is "+len(path))
+
             diff = target - transform.position
             mag = diff.magnitude
             size_ish = (renderer as SpriteRenderer).sprite.bounds.size.x
-
             if mag < size_ish and the_doonk.name.IndexOf("doonk") != -1:
                 Destroy(the_doonk)
                 the_doonk = GameObject("garbage")
 
-            mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
-            vel = diff*mul
+            if 0:
+                mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
+                vel = diff*mul
 
-            transform.position += vel
-            transform.position.z = 0
+                transform.position += vel
+                transform.position.z = 0
+            else:
+                d = (transform.position - target).magnitude
+                Debug.Log("dist to target is"+d)
+                if path == null and d > 0.5:
+                    Debug.Log("trying to make path not null")
+                    
+                    path = path_find.plan(transform.position, 
+                                          target, 
+                                          3, 
+                                          10)
+                    Debug.Log("is path now null?"+(path == null))
+                
+                if (path != null and 
+                    len(path) > 0 and 
+                    ((path[0] cast Vector2) - transform.position).magnitude < 0.01):
+                    path = path[1:]
+
+                    diff = (path[0] cast Vector2) - transform.position
+                    mag = diff.magnitude
+
+                    mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
+                    vel = diff*mul
+
+                    transform.position += vel
+                    transform.position.z = 0
+                    
 
     def set_sprname(sprname as string):
         sprite_name = sprname
