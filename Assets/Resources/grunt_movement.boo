@@ -66,36 +66,27 @@ class grunt_movement(MonoBehaviour):
                 Destroy(the_doonk)
                 the_doonk = GameObject("garbage")
 
-            if 0:
-                mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
-                vel = diff*mul
+            d = (transform.position - target).magnitude
+            if path == null and d > 0.5:
+                path = path_find.plan(transform.position, 
+                                      target, 
+                                      3, 
+                                      3)
 
-                transform.position += vel
-                transform.position.z = 0
-            else:
-                d = (transform.position - target).magnitude
-                Debug.Log("pos="+transform.position+" target="+target)
-                if path == null and d > 0.5:
-                    path = path_find.plan(transform.position, 
-                                          target, 
-                                          3, 
-                                          3)
-                
-                if path != null:
-                    if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
-                       path = path[1:] 
-                    if len(path) == 0:
-                        path = null
-                    else:
-                        Debug.Log("start of path is +"+path[-1]+"target is "+path[0])
-                        diff = (path[0] cast Vector2) - transform.position
-                        mag = diff.magnitude
+            if path != null:
+                if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
+                   path = path[1:] 
+                if len(path) == 0:
+                    path = null
+                else:
+                    diff = (path[0] cast Vector2) - transform.position
+                    mag = diff.magnitude
 
-                        mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
-                        vel = diff*mul
+                    mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
+                    vel = diff*mul
 
-                        transform.position += vel
-                        transform.position.z = 0
+                    transform.position += vel
+                    transform.position.z = 0
                     
 
     def set_sprname(sprname as string):

@@ -8,11 +8,13 @@ class path_node(Object):
     public valid as bool
     public coll_rad as single
     public costplus as single
+    public parent_valid as bool
 
     def constructor(_pos as Vector2, 
                     _parent as path_node,
                     _cost as single,
-                    togoal as single):
+                    togoal as single,
+                    _parent_valid as bool):
         pos = _pos
         parent = _parent
         cost = _cost
@@ -20,10 +22,10 @@ class path_node(Object):
         children = array(path_node, 0)
         valid = true
         coll_rad = 1
+        parent_valid = _parent_valid
 
     def check_pt(p as Vector2):
         colls = Physics2D.OverlapCircleAll(p, coll_rad)
-        #Debug.Log("got "+len(colls)+" colls when checking "+p)
         for c in colls:
             if c.gameObject.GetComponent[of mouse_follow]() == null:
                 return false
@@ -44,12 +46,9 @@ class path_node(Object):
             children = (path_node(goal, 
                                   self, 
                                   cost + (goal-pos).magnitude,
-                                  0),)
+                                  0,
+                                  true),)
 
-            Debug.Log("after creating goal node, parent nullness is "+(children[0].parent == null))
-            Debug.Log("and self nullness is "+(self == null))
-            
-            
         else:
             p2 = pos + (goal - pos).normalized * dist
             
@@ -58,7 +57,8 @@ class path_node(Object):
                 goal_node = path_node(p2,
                                       self,
                                       cost + dist,
-                                      (p2 - goal).magnitude)
+                                      (p2 - goal).magnitude,
+                                      true)
 
                 children = array(path_node, n_rdm_branch+1)
                 children[n_rdm_branch] = goal_node
@@ -75,11 +75,10 @@ class path_node(Object):
                     children[i] = path_node(p,
                                             self,
                                             cost + dist,
-                                            (p-goal).magnitude)
-                    Debug.Log("after creating random node, parent nullness is "+(children[i].parent == null))
-
+                                            (p-goal).magnitude,
+                                            true)
                 else:
-                    node = path_node(Vector2(0, 0), self, 0.0, goal.magnitude)
+                    node = path_node(Vector2(0, 0), self, 0.0, goal.magnitude, true)
                     node.valid = false
                     children[i] = node
                 i += 1
@@ -90,16 +89,39 @@ class path_find(Object):
                     end as Vector2, 
                     n_rdm_branch as int,
                     exp_dist as single):
-        Debug.Log("starting to plan")
-        l = System.Collections.Generic.SortedList[of single, List]()
+        prelim_plan = make_plan(start,
+                                end,
+                                n_rdm_branch,
+                                exp_dist)
 
-        l.Add((start-end).magnitude, 
-              [path_node(start, 
-                         null, 
-                         0, 
-                         (start-end).magnitude)])
+        opt_plan = []
+        for i in range(len(prelim_plan), 0, -1):
+            if 
+
+    static def vis_test(start as Vector2, 
+                        end as Vector2,
+                        rad as single):
+        d = (end-start).magnitude
+
+        right_shoulder = Vector3.Cross(end-start, Vector3(0,0,1)).normalized * rad
         
-        for i in range(100):
+        return (Physics2D.Raycast(right_shoulder, (end-start.normalized), d).collider == null and 
+                Physics2D.Raycast(-right_shoulder, (end-start.normalized), d).collider == null)
+
+    static def make_plan(start as Vector2, 
+                         end as Vector2, 
+                         n_rdm_branch as int,
+                         exp_dist as single):
+        l = System.Collections.Generic.SortedList[of single, List]()
+        n = path_node(start, 
+                      null, 
+                      0, 
+                      (start-end).magnitude,
+                      false)
+        l.Add((start-end).magnitude, 
+              [n])
+        
+        for i in range(1000):
             mylist = l.Values[0][:]
             #Debug.Log("l.Keys[0]="+l.Keys[0]+" l.Keys[-1]="+l.Keys[0])
             for n as path_node in mylist:
@@ -115,16 +137,13 @@ class path_find(Object):
 
                     if len(new_children) == 1:
                         # found the goal
-                        Debug.Log("howdy?")
                         n = new_children[0]
                         ret = [n.pos]
-                        Debug.Log("found goal at "+n.pos)
-                        Debug.Log(" and parent nullness is "+(n.parent==null))
-
-                        while n.parent != null:
+                        Debug.Log("n.pos="+n.pos+" n.parent_valid="+n.parent_valid)
+                        while n.parent_valid:
                             ret.Add(n.pos)
                             n = n.parent
-                            Debug.Log("found goal at "+n.pos+" and parent nullness is "+(n.parent==null))
+                            Debug.Log("new parent valid is "+n.parent_valid)
 
                         return List(reversed(ret))
 
