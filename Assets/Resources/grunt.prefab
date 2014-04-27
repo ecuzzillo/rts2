@@ -57,7 +57,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Radius: 5.19999981
+  m_Radius: 1
   m_Center: {x: 0, y: 0}
 --- !u!95 &9500000
 Animator:
@@ -103,10 +103,12 @@ MonoBehaviour:
   the_doonk: {fileID: 0}
   sel_mgr: {fileID: 0}
   mouse_coll: {fileID: 0}
+  mouse_down: 0
   is_core: 1
   health: 5
   max_health: 5
   sprite_name: arrow-block-corners
+  inited: 0
 --- !u!148 &14800000
 NetworkView:
   m_ObjectHideFlags: 1
