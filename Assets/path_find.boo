@@ -5,6 +5,7 @@ class path_node(Object):
     public parent as path_node
     public children as (path_node)
     public cost as single
+    public valid as bool
 
     def constructor(_pos as Vector2, 
                     _parent as path_node,
@@ -51,12 +52,16 @@ class path_node(Object):
                 p = pos + Random.insideUnitCircle.normalized * dist
 
                 if len(Physics2D.OverlapCircleAll(p, 1)) == 0:
+                    Debug.Log("WTFFFF: path_node(" + p + ", " + self + ", " + (cost + dist) + ")")
                     children[i] = path_node(p,
                                             self,
                                             cost + dist)
                     Debug.Log("setting children["+i+"]")
+                else:
+                    node = path_node(Vector2(0, 0), self, 0.0)
+                    node.valid = false
+                    children[i] = node
                 i += 1
-
 
         return children
 
@@ -76,24 +81,25 @@ class path_find(Object):
             mylist = l.Values[l.Count-1][:]
             for n as path_node in mylist:
                 Debug.Log("hi i="+i+" n="+n+" pos="+n.pos+" cost="+n.cost+" len(mylist)="+len(mylist))
-                new_children = n.expand(n_rdm_branch, 
-                                        exp_dist, 
-                                        end)
-                if len(new_children) == 1:
-                    # found the goal
-                    ret = []
-                    n = new_children[0]
-                    while n.parent != null:
-                        ret.Add(n.pos)
-                        n = n.parent
-                        return reversed(ret)
+                if n.valid:
+                    new_children = n.expand(n_rdm_branch, 
+                                            exp_dist, 
+                                            end)
+                    if len(new_children) == 1:
+                        # found the goal
+                        ret = []
+                        n = new_children[0]
+                        while n.parent != null:
+                            ret.Add(n.pos)
+                            n = n.parent
+                            return reversed(ret)
 
-                for j in range(len(new_children)):
-                    Debug.Log("new_children["+j+"]="+new_children[j])
-                    Debug.Log("new_children["+j+"].cost"+new_children[j].cost)
-                    Debug.Log("l.ContainsKey(new_children[j].cost)"+l.ContainsKey(new_children[j].cost))
-                    if l.ContainsKey(new_children[j].cost):
-                        l[new_children[j].cost].Add(new_children[j])
-                    else:
-                        l.Add(new_children[j].cost, 
-                              [new_children[j]])
+                    for j in range(len(new_children)):
+                        Debug.Log("new_children["+j+"]="+new_children[j])
+                        Debug.Log("new_children["+j+"].cost"+new_children[j].cost)
+                        Debug.Log("l.ContainsKey(new_children[j].cost)"+l.ContainsKey(new_children[j].cost))
+                        if l.ContainsKey(new_children[j].cost):
+                            l[new_children[j].cost].Add(new_children[j])
+                        else:
+                            l.Add(new_children[j].cost, 
+                                  [new_children[j]])
