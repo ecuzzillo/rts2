@@ -1,5 +1,33 @@
 ﻿import UnityEngine
 
+class priority_queue(Object):
+    public sorted_list as System.Collections.Generic.SortedList[of single, List]
+
+    def constructor():
+        sorted_list = System.Collections.Generic.SortedList[of single, List]()
+
+    def insert(priority as single, elem):
+        if sorted_list.ContainsKey(priority):
+            idx = sorted_list.IndexOfKey(priority)
+            sorted_list[idx].Add(elem)
+        else:
+            sorted_list.Add(priority, [elem])
+
+    def remove_head():
+        if sorted_list.Count == 0:
+            return null
+        elif len(sorted_list.Values[0]) > 1:
+            result = sorted_list.Values[0][0]
+            sorted_list.Values[0] = sorted_list.Values[0][1:]
+            return result
+        else:
+            result = sorted_list.Values[0][0]
+            sorted_list.RemoveAt(0)
+            return result
+
+
+
+
 class path_node(Object):
     public pos as Vector2
     public parent as path_node
@@ -90,6 +118,7 @@ class path_find(Object):
                                 exp_dist,
                                 coll_rad)
         if prelim_plan != null:
+            return prelim_plan
             Debug.Log("prelim plan has len "+len(prelim_plan))
 
             opt_plan = []
@@ -133,32 +162,24 @@ class path_find(Object):
                          n_rdm_branch as int,
                          exp_dist as single,
                          coll_rad as single):
-        # l is a list of nodes to expand
-        l = System.Collections.Generic.SortedList[of single, List]()
+        pq = priority_queue()
         n = path_node(start,
                       null,
                       0,
                       (start-end).magnitude,
                       false,
                       coll_rad)
-        l.Add((start-end).magnitude,
-              [n])
+        pq.insert((start-end).magnitude,
+                  n)
 
         for i in range(1000):
-            Debug.Log("l.Count == " + l.Count)
-            n = l.Values[0][0]
+            Debug.Log("pq.Count == " + pq.sorted_list.Count)
+            n = pq.remove_head()
             #l0_cpy = l.Values[0][:]
             #Debug.Log("l.Keys[0]="+l.Keys[0]+" l.Keys[-1]="+l.Keys[0])
             new_children = n.expand(n_rdm_branch,
                                     exp_dist,
                                     end)
-            if len(new_children) == 0:
-                Debug.Log("OOOOOOOOHHHHHH")
-            if len(l.Values[0]) > 1:
-                l[l.Keys[0]] = l.Values[0][1:]
-
-            else:
-                l.RemoveAt(0)
 
             if len(new_children) > 0 and new_children[0] == end:
                 # found the goal
@@ -174,9 +195,5 @@ class path_find(Object):
 
             for j in range(len(new_children)):
                 costplus = (new_children[j] cast path_node).costplus
-                if l.ContainsKey(costplus):
-                    l[costplus].Add(new_children[j])
-                else:
-                    l.Add(costplus,
-                          [new_children[j]])
+                pq.insert(costplus, new_children[j])
 
