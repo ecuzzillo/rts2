@@ -107,19 +107,23 @@ class path_node(Object):
         return children
 
 class path_find(Object): 
+    public static plan_count as int = 0
+
     static def plan(start as Vector2, 
                     end as Vector2, 
                     n_rdm_branch as int,
                     exp_dist as single,
                     coll_rad as single):
+        plan_count += 1
+        Debug.Log("Plan called " + plan_count + " times")
         prelim_plan = make_plan(start,
                                 end,
                                 n_rdm_branch,
                                 exp_dist,
                                 coll_rad)
+        Debug.Log("prelim plan has len "+len(prelim_plan))
         if prelim_plan != null:
             return prelim_plan
-            Debug.Log("prelim plan has len "+len(prelim_plan))
 
             opt_plan = []
             cur_pt = start
@@ -181,10 +185,12 @@ class path_find(Object):
                                     exp_dist,
                                     end)
 
-            if len(new_children) > 0 and new_children[0] == end:
+            if len(new_children) > 0 and ((new_children[0] cast path_node).pos - end).magnitude < 0.01:
+                Debug.Log("FOUND GOAL")
                 # found the goal
                 n = new_children[0]
-                ret = [n.pos]
+                #ret = [n.pos]
+                ret = []
                 Debug.Log("n.pos="+n.pos+" n.parent_valid="+n.parent_valid)
                 while n.parent_valid:
                     ret.Add(n.pos)

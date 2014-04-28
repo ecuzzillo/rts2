@@ -67,16 +67,17 @@ class grunt_movement(MonoBehaviour):
                 the_doonk = GameObject("garbage")
 
             d = (transform.position - target).magnitude
-            if path == null and d > 0.5:
+            if path == null and d > 0.01:
+                Debug.Log("Replanning")
                 path = path_find.plan(transform.position, 
-                                      target, 
-                                      3, 
+                                      target,
+                                      10,
                                       3,
-                                      2)
+                                      1)
 
             if path != null:
                 if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
-                   path = path[1:] 
+                   path = path[1:]
                 if len(path) == 0:
                     path = null
                 else:
