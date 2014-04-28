@@ -8,8 +8,7 @@ class priority_queue(Object):
 
     def insert(priority as single, elem):
         if sorted_list.ContainsKey(priority):
-            idx = sorted_list.IndexOfKey(priority)
-            sorted_list[idx].Add(elem)
+            sorted_list[priority].Add(elem)
         else:
             sorted_list.Add(priority, [elem])
 
@@ -27,6 +26,25 @@ class priority_queue(Object):
 
 
 
+def get_prox_ind(prox as (int, 2), 
+                 pt as Vector2):
+    pt = Camera.main.WorldToScreenPoint(pt)
+    pt.x /= Camera.main.pixelWidth
+    pt.y /= Camera.main.pixelHeight
+    
+    ret = Vector2(Mathf.Round(pt.x * len(prox, 0)), 
+                  Mathf.Round(pt.y * len(prox, 1)))
+
+    return ret
+def inc_prox(prox as (int, 2),
+             pt as Vector2):
+    p = get_prox_ind(prox, pt)
+    prox[p.x, p.y] += 1
+def get_prox(prox as (int, 2),
+             pt as Vector2):
+    p = get_prox_ind(prox, pt)
+    ret = prox[p.x, p.y]
+    return ret
 
 class path_node(Object):
     public pos as Vector2
@@ -62,7 +80,10 @@ class path_node(Object):
         return true
 
 
-    def expand(n_rdm_branch as int, dist as single, goal as Vector2) as List:
+    def expand(n_rdm_branch as int, 
+               dist as single, 
+               goal as Vector2,
+               prox as (int, 2)) as List:
         if dist > 100:
             Debug.Log("oh no dist > 100"+dist)
             return []
@@ -82,7 +103,7 @@ class path_node(Object):
         else:
             p2 = pos + (goal - pos).normalized * dist
 
-            if check_pt(p2):
+            if not(get_prox(prox, p2)) and check_pt(p2):
                 goal_node = path_node(p2,
                                       self,
                                       cost + dist,
@@ -93,10 +114,10 @@ class path_node(Object):
                 children.Add(goal_node)
 
             i = 0
-            while len(children) < n_rdm_branch:
+            while (i < 15) and (len(children) < n_rdm_branch):
                 p = pos + Random.insideUnitCircle.normalized * dist
 
-                if check_pt(p):
+                if not(get_prox(prox, p)) and check_pt(p):
                     children.Add(path_node(p,
                                            self,
                                            cost + dist,
@@ -104,6 +125,11 @@ class path_node(Object):
                                            true,
                                            coll_rad))
                 i += 1
+
+        for i in range(len(children)):
+            inc_prox(prox, (children[i] cast path_node).pos)
+
+
         return children
 
 class path_find(Object): 
@@ -118,13 +144,12 @@ class path_find(Object):
                                 exp_dist,
                                 coll_rad)
         if prelim_plan != null:
-            return prelim_plan
             Debug.Log("prelim plan has len "+len(prelim_plan))
-
+            return prelim_plan
             opt_plan = []
             cur_pt = start
             cur_idx = 0
-            for _ in range(20):
+            for _ in range(200):
                 breakflag = false
                 for i in range(len(prelim_plan)-1, cur_idx, -1):
                     if vis_test(cur_pt, prelim_plan[i], coll_rad):
@@ -157,31 +182,43 @@ class path_find(Object):
         Debug.Log("vis_test returning " + result)
         return result
 
+        
+
     static def make_plan(start as Vector2, 
                          end as Vector2, 
                          n_rdm_branch as int,
                          exp_dist as single,
                          coll_rad as single):
         pq = priority_queue()
+
+        res = 50
+        prox = matrix(int, res, Mathf.Round(Camera.main.aspect*res))
+        for i in range(len(prox, 0)):
+            for j in range(len(prox, 1)):
+                prox[i,j] = 0
         n = path_node(start,
                       null,
                       0,
                       (start-end).magnitude,
                       false,
                       coll_rad)
+        inc_prox(prox, n.pos)
         pq.insert((start-end).magnitude,
                   n)
 
+
         for i in range(1000):
             Debug.Log("pq.Count == " + pq.sorted_list.Count)
+            Debug.Log("pq.Keys[0]="+pq.sorted_list.Keys[0])
             n = pq.remove_head()
             #l0_cpy = l.Values[0][:]
             #Debug.Log("l.Keys[0]="+l.Keys[0]+" l.Keys[-1]="+l.Keys[0])
             new_children = n.expand(n_rdm_branch,
                                     exp_dist,
-                                    end)
+                                    end, 
+                                    prox)
 
-            if len(new_children) > 0 and new_children[0] == end:
+            if len(new_children) > 0 and (new_children[0] cast path_node).pos == end:
                 # found the goal
                 n = new_children[0]
                 ret = [n.pos]
