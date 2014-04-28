@@ -71,7 +71,8 @@ class grunt_movement(MonoBehaviour):
                 path = path_find.plan(transform.position, 
                                       target, 
                                       3, 
-                                      3)
+                                      3,
+                                      2)
 
             if path != null:
                 if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
