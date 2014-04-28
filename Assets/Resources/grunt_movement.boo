@@ -52,6 +52,9 @@ class grunt_movement(MonoBehaviour):
         OnTriggerStay2D(other)
 
     virtual def FixedUpdate():
+        pass
+
+    virtual def Update():
         #Debug.Log("FixedUpdate")
         if mouse_down and not Input.GetMouseButton(0):
             sel_mgr.selected = []
@@ -72,7 +75,7 @@ class grunt_movement(MonoBehaviour):
                                       target, 
                                       3, 
                                       3,
-                                      2)
+                                      6)
                 Debug.Log("path nullness is "+(path == null))
 
             if path != null:

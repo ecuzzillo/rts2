@@ -145,7 +145,7 @@ class path_find(Object):
                                 coll_rad)
         if prelim_plan != null:
             Debug.Log("prelim plan has len "+len(prelim_plan))
-            return prelim_plan
+            #return prelim_plan
             opt_plan = []
             cur_pt = start
             cur_idx = 0
@@ -177,8 +177,8 @@ class path_find(Object):
 
         right_shoulder = Vector3.Cross(end-start, Vector3(0,0,1)).normalized * rad
 
-        result = ((Physics2D.Raycast(start + right_shoulder, (end-start.normalized), d).collider == null) and
-                (Physics2D.Raycast(start - right_shoulder, (end-start.normalized), d).collider == null))
+        result = ((Physics2D.Raycast(start + right_shoulder, (end-start).normalized, d).collider == null) and
+                (Physics2D.Raycast(start - right_shoulder, (end-start).normalized, d).collider == null))
         Debug.Log("vis_test returning " + result)
         return result
 
