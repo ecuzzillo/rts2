@@ -6,21 +6,32 @@ class gun_movement(grunt_movement):
     public gun_target as NetworkViewID
     public target_valid as bool
     public static GUN_COOLDOWN = 60
+    public gun_range as single
 
     def constructor():
         cooling_down = false
         cooldown_timer = 0
         target_valid = false
-
+        gun_range = 2
+        
     override def FixedUpdate():
         super.FixedUpdate()
         if cooling_down:
             cooldown_timer -= 1
             if cooldown_timer == 0:
                 cooling_down = false
-        elif target_valid:
-            my_network_view = NetworkView.Find(gun_target)
-            fire(my_network_view)
+        else:
+            target_valid = false
+            colls = Physics2D.OverlapCircleAll(transform.position, gun_range)
+            for c in colls: 
+                if c.name == 'grunt' and not owned.ContainsKey[c.gameObject.GetInstanceID()]:
+                    gun_target = c.gameObject.networkView.viewID
+                    target_valid = true
+                    break
+                    
+            if target_valid:
+                my_network_view = NetworkView.Find(gun_target)
+                fire(my_network_view)
 
     def fire(my_network_view as NetworkView):
         if my_network_view != null:
