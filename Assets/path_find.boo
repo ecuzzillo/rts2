@@ -64,6 +64,8 @@ class prox(Object):
                     arr[i,j] = 1
                 else:
                     arr[i,j] = 0
+    def node_dist():
+        return (get_pt(Vector2(0,0)) - get_pt(Vector2(0,1))).magnitude
 
     def get_ind(pt as Vector2):
         pt = Camera.main.WorldToScreenPoint(pt)
@@ -140,13 +142,10 @@ class path_node(Object):
         return vis_test(pos, p, coll_rad)
 
 
-    def expand(n_rdm_branch as int, 
-               dist as single, 
-               goal as Vector2,
+    def expand(goal as Vector2,
                the_prox as prox) as List:
-        if dist > 100:
-            #Debug.Log("oh no dist > 100"+dist)
-            return []
+
+        dist = the_prox.node_dist()
 
         if len(children) > 0:
             #Debug.Log("oh no we're already expanded! length is "+len(children))
@@ -213,8 +212,6 @@ class path_node(Object):
 class path_find(Object): 
     static def plan(start as Vector2, 
                     end as Vector2, 
-                    n_rdm_branch as int,
-                    exp_dist as single,
                     coll_rad as single):
 
         colls = Physics2D.OverlapCircleAll(end, coll_rad)
@@ -225,8 +222,6 @@ class path_find(Object):
 
         prelim_plan = make_plan(start,
                                 end,
-                                n_rdm_branch,
-                                exp_dist,
                                 coll_rad)
         if prelim_plan != null:
             #Debug.Log("prelim plan has len "+len(prelim_plan))
@@ -261,8 +256,6 @@ class path_find(Object):
 
     static def make_plan(start as Vector2, 
                          end as Vector2, 
-                         n_rdm_branch as int,
-                         exp_dist as single,
                          coll_rad as single):
         pq = priority_queue()
 
@@ -285,9 +278,7 @@ class path_find(Object):
             n = pq.remove_head()
             #l0_cpy = l.Values[0][:]
             #Debug.Log("l.Keys[0]="+l.Keys[0]+" l.Keys[-1]="+l.Keys[0])
-            new_children = n.expand(n_rdm_branch,
-                                    exp_dist,
-                                    end, 
+            new_children = n.expand(end, 
                                     the_prox)
 
             if len(new_children) > 0 and (new_children[0] cast path_node).pos == end:

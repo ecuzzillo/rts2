@@ -1,5 +1,27 @@
 ﻿import UnityEngine
 
+def mymod(a as single, b as single):
+    if b < 0:
+        Debug.Log("MOD IS BEING GIVEN A NEGATIVE")
+    while a < 0:
+        a += b
+    while a >= b:
+        a -= b
+    return a
+
+def ang_diff(a as single, b as single):
+    a = mymod(a, 2*Mathf.PI)
+    b = mymod(b, 2*Mathf.PI)
+    ret = Mathf.Abs(b - a)
+    if (ret > Mathf.PI):
+        ret = Mathf.Abs(ret - 2*Mathf.PI)
+    
+    if ((a - b) < 0) ^ (Mathf.Abs(a-b) > Mathf.PI):
+        ret *= -1
+    return ret
+
+
+
 class grunt_movement(MonoBehaviour): 
     public vel as Vector3
     public target as Vector3
@@ -13,6 +35,7 @@ class grunt_movement(MonoBehaviour):
     public sprite_name as string
     public path as List
     public inited as bool
+    public rot_rate as single
 
     def constructor():
         sprite_name = "arrow-block-corners"
@@ -20,6 +43,7 @@ class grunt_movement(MonoBehaviour):
         is_core = true
         max_health = 5
         health = max_health
+        rot_rate = Mathf.PI/60
 
     def Start():
         the_doonk = GameObject("garbage")
@@ -52,9 +76,6 @@ class grunt_movement(MonoBehaviour):
         OnTriggerStay2D(other)
 
     virtual def FixedUpdate():
-        pass
-
-    def Update():
         #Debug.Log("FixedUpdate")
         if mouse_down and not Input.GetMouseButton(0):
             sel_mgr.selected = []
@@ -73,20 +94,24 @@ class grunt_movement(MonoBehaviour):
             if path == null and d > 0.5:
                 path = path_find.plan(transform.position, 
                                       target, 
-                                      3, 
-                                      3,
                                       2)
 
             if path != null:
-                
-                if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
+                diff = ((path[0] cast Vector2) - transform.position)
+                mag = diff.magnitude
+                ang = Mathf.Atan2(diff.y, diff.x) 
+                angdiff = ang_diff(ang, transform.eulerAngles.z*Mathf.Deg2Rad)
+                if mag < 0.01:
                    path = path[1:] 
                 if len(path) == 0:
                     path = null
+                elif Mathf.Abs(angdiff) > Mathf.PI/10:
+                      transform.eulerAngles.z += (Mathf.Rad2Deg * 
+                                                  Mathf.Sign(angdiff) * 
+                                                  Mathf.Min(Mathf.Abs(angdiff), 
+                                                            rot_rate))
+                                                     
                 else:
-                    diff = (path[0] cast Vector2) - transform.position
-                    mag = diff.magnitude
-
                     mul = (Mathf.Atan(mag)/mag if Mathf.Abs(mag) > 0.001 else 0)
                     vel = diff*mul
 
