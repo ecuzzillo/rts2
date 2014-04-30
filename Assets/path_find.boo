@@ -16,7 +16,7 @@ class priority_queue(Object):
         if sorted_list.Count == 0:
             return null
         elif len(sorted_list.Values[0]) > 1:
-            Debug.Log("going from len "+len(sorted_list.Values[0])+" to len "+len(sorted_list.Values[0][1:]))
+            #Debug.Log("going from len "+len(sorted_list.Values[0])+" to len "+len(sorted_list.Values[0][1:]))
             result = sorted_list.Values[0][0]
             sorted_list.Values[0] = sorted_list.Values[0][1:]
             return result
@@ -67,6 +67,19 @@ class prox(Object):
         p = get_ind(pt)
         return arr[p.x, p.y]
 
+def vis_test(start as Vector2,
+             end as Vector2,
+             rad as single):
+    d = (end-start).magnitude
+    
+    right_shoulder = Vector3.Cross(end-start, Vector3(0,0,1)).normalized * rad
+    
+    result = ((Physics2D.Raycast(start + right_shoulder, (end-start).normalized, d).collider == null) and
+              (Physics2D.Raycast(start - right_shoulder, (end-start).normalized, d).collider == null))
+    #Debug.Log("vis_test returning " + result)
+    return result
+
+
 class path_node(Object):
     public pos as Vector2
     public parent as path_node
@@ -102,7 +115,7 @@ class path_node(Object):
             if c.gameObject.GetComponent[of mouse_follow]() == null:
                 return false
 
-        return true
+        return vis_test(pos, p, coll_rad)
 
 
     def expand(n_rdm_branch as int, 
@@ -110,11 +123,11 @@ class path_node(Object):
                goal as Vector2,
                the_prox as prox) as List:
         if dist > 100:
-            Debug.Log("oh no dist > 100"+dist)
+            #Debug.Log("oh no dist > 100"+dist)
             return []
 
         if len(children) > 0:
-            Debug.Log("oh no we're already expanded! length is "+len(children))
+            #Debug.Log("oh no we're already expanded! length is "+len(children))
             return children
 
         if (goal-pos).magnitude < dist:
@@ -135,7 +148,7 @@ class path_node(Object):
             p1 = the_prox.get_pt(Vector2(ind.x-1, ind.y))
             p2 = the_prox.get_pt(Vector2(ind.x, ind.y+1))
             p3 = the_prox.get_pt(Vector2(ind.x, ind.y-1))
-            Debug.Log("pts: "+p+" "+ind+" "+p0+" "+p1+" "+p2+" "+p3)
+            #Debug.Log("pts: "+p+" "+ind+" "+p0+" "+p1+" "+p2+" "+p3)
             add_if_good(the_prox, 
                         p0,
                         goal, 
@@ -174,6 +187,7 @@ class path_node(Object):
             the_prox.inc(p)
 
 
+
 class path_find(Object): 
     static def plan(start as Vector2, 
                     end as Vector2, 
@@ -186,14 +200,15 @@ class path_find(Object):
                                 exp_dist,
                                 coll_rad)
         if prelim_plan != null:
-            Debug.Log("prelim plan has len "+len(prelim_plan))
+            #Debug.Log("prelim plan has len "+len(prelim_plan))
             #return prelim_plan
             opt_plan = []
             cur_pt = start
             cur_idx = 0
-            for i in range(4000):
+            for _ in range(10000):
                 breakflag = false
                 for i in range(len(prelim_plan)-1, cur_idx, -1):
+                    
                     if vis_test(cur_pt, prelim_plan[i], coll_rad):
                         opt_plan.Add(prelim_plan[i])
                         cur_pt = prelim_plan[i]
@@ -204,7 +219,7 @@ class path_find(Object):
 
                 if breakflag: break
 
-            Debug.Log("len(opt_plan) == " + len(opt_plan))
+            #Debug.Log("len(opt_plan) == " + len(opt_plan))
             if len(opt_plan) == 0:
                 return prelim_plan
             else:
@@ -212,17 +227,6 @@ class path_find(Object):
         else:
             return prelim_plan
 
-    static def vis_test(start as Vector2,
-                        end as Vector2,
-                        rad as single):
-        d = (end-start).magnitude
-
-        right_shoulder = Vector3.Cross(end-start, Vector3(0,0,1)).normalized * rad
-
-        result = ((Physics2D.Raycast(start + right_shoulder, (end-start).normalized, d).collider == null) and
-                (Physics2D.Raycast(start - right_shoulder, (end-start).normalized, d).collider == null))
-        Debug.Log("vis_test returning " + result)
-        return result
 
         
 
@@ -247,8 +251,8 @@ class path_find(Object):
 
 
         for i in range(10000):
-            Debug.Log("pq.Count == " + pq.sorted_list.Count)
-            Debug.Log("pq.Keys[0]="+pq.sorted_list.Keys[0])
+            #Debug.Log("pq.Count == " + pq.sorted_list.Count)
+            #Debug.Log("pq.Keys[0]="+pq.sorted_list.Keys[0])
             n = pq.remove_head()
             #l0_cpy = l.Values[0][:]
             #Debug.Log("l.Keys[0]="+l.Keys[0]+" l.Keys[-1]="+l.Keys[0])
@@ -261,11 +265,11 @@ class path_find(Object):
                 # found the goal
                 n = new_children[0]
                 ret = [n.pos]
-                Debug.Log("n.pos="+n.pos+" n.parent_valid="+n.parent_valid)
+                #Debug.Log("n.pos="+n.pos+" n.parent_valid="+n.parent_valid)
                 while n.parent_valid:
                     ret.Add(n.pos)
                     n = n.parent
-                    Debug.Log("new parent valid is "+n.parent_valid)
+                    #Debug.Log("new parent valid is "+n.parent_valid)
 
                 return List(reversed(ret))
 
