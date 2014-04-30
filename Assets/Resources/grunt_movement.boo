@@ -92,6 +92,9 @@ class grunt_movement(MonoBehaviour):
 
                     transform.position += vel
                     transform.position.z = 0
+
+            else:
+                target = transform.position
                     
 
     def set_sprname(sprname as string):

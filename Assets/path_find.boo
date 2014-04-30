@@ -28,6 +28,26 @@ class priority_queue(Object):
             return result
 
 
+def raycast_on_screen(p as Vector2, 
+                      v as Vector2,
+                      des_coll as Collider2D):
+
+        ray = Physics2D.Raycast(p, v)
+        if ray.collider != des_coll:
+            ignore_list = []
+            while (ray.collider != des_coll):
+
+                ignore_list.Add(ray.collider.gameObject)
+                ray.collider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast")
+                ray = Physics2D.Raycast(p, v)
+                
+
+            for i in range(len(ignore_list)):
+                obj as GameObject = ignore_list[i]
+                obj.layer = LayerMask.NameToLayer("Default")
+
+        return ray.point
+
 class prox(Object):
     public res as int
     public margin as int
@@ -196,6 +216,13 @@ class path_find(Object):
                     n_rdm_branch as int,
                     exp_dist as single,
                     coll_rad as single):
+
+        colls = Physics2D.OverlapCircleAll(end, coll_rad)
+        for c in colls:
+            if c.gameObject.GetComponent[of mouse_follow]() == null:
+                Debug.Log("target unreachable, refusing to plan")
+                return null
+
         prelim_plan = make_plan(start,
                                 end,
                                 n_rdm_branch,
