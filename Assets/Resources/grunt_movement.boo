@@ -76,10 +76,8 @@ class grunt_movement(MonoBehaviour):
                                       3, 
                                       3,
                                       2)
-                Debug.Log("path nullness is "+(path == null))
 
             if path != null:
-                Debug.Log("got plan of len "+len(path))
                 
                 if ((path[0] cast Vector2) - transform.position).magnitude < 0.01:
                    path = path[1:] 

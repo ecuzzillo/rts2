@@ -16,9 +16,11 @@ class priority_queue(Object):
         if sorted_list.Count == 0:
             return null
         elif len(sorted_list.Values[0]) > 1:
-            #Debug.Log("going from len "+len(sorted_list.Values[0])+" to len "+len(sorted_list.Values[0][1:]))
+            Debug.Log("going from len "+len(sorted_list.Values[0])+" to len "+len(sorted_list.Values[0][1:]))
             result = sorted_list.Values[0][0]
-            sorted_list.Values[0] = sorted_list.Values[0][1:]
+            copy = sorted_list.Values[0][1:]
+            key = sorted_list.Keys[0]
+            sorted_list[key] = copy
             return result
         else:
             result = sorted_list.Values[0][0]
