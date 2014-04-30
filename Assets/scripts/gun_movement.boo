@@ -9,6 +9,7 @@ class gun_movement(grunt_movement):
     public gun_range as single
 
     def constructor():
+        super()
         cooling_down = false
         cooldown_timer = 0
         target_valid = false
@@ -24,7 +25,7 @@ class gun_movement(grunt_movement):
             target_valid = false
             colls = Physics2D.OverlapCircleAll(transform.position, gun_range)
             for c in colls: 
-                if c.name == 'grunt' and not owned.ContainsKey[c.gameObject.GetInstanceID()]:
+                if c.name == 'grunt' and not sel_mgr.owned.ContainsKey(c.gameObject.GetInstanceID()):
                     gun_target = c.gameObject.networkView.viewID
                     target_valid = true
                     break

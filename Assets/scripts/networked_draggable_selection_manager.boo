@@ -62,7 +62,7 @@ class networked_draggable_selection_manager(MonoBehaviour):
 
     def make_part_at_cursor() as GameObject:
         if part_counter > 0:
-            new_obj = (Network.Instantiate(Resources.Load("grunt"),
+            new_obj = (Network.Instantiate(Resources.Load("gun_obj"),
                                            Camera.main.ScreenToWorldPoint(Input.mousePosition),
                                            Quaternion.identity, 0) cast GameObject)
             new_obj.transform.position.z = 0

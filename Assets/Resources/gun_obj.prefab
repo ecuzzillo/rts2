@@ -57,7 +57,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Radius: 5.19999981
+  m_Radius: 1
   m_Center: {x: 0, y: 0}
 --- !u!95 &9500000
 Animator:
@@ -103,13 +103,17 @@ MonoBehaviour:
   the_doonk: {fileID: 0}
   sel_mgr: {fileID: 0}
   mouse_coll: {fileID: 0}
+  mouse_down: 0
   is_core: 1
   health: 5
   max_health: 5
   sprite_name: arrow-block-corners
+  inited: 0
+  rot_rate: .052359879
   cooling_down: 0
   cooldown_timer: 0
   target_valid: 0
+  gun_range: 2
 --- !u!148 &14800000
 NetworkView:
   m_ObjectHideFlags: 1
@@ -143,7 +147,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
-  m_Sprite: {fileID: 21300000, guid: 0300e63f5f8d1495b90b256832d533ff, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 28e06c014d8a340df8ec38733af1bab0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:

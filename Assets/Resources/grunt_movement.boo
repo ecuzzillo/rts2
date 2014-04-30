@@ -76,11 +76,9 @@ class grunt_movement(MonoBehaviour):
         OnTriggerStay2D(other)
 
     virtual def FixedUpdate():
-        #Debug.Log("FixedUpdate")
         if mouse_down and not Input.GetMouseButton(0):
             sel_mgr.selected = []
             mouse_down = false
-
 
         if is_core:
             diff = target - transform.position
@@ -92,6 +90,7 @@ class grunt_movement(MonoBehaviour):
 
             d = (transform.position - target).magnitude
             if path == null and d > 0.5:
+                Debug.Log("target is "+target)
                 path = path_find.plan(transform.position, 
                                       target, 
                                       2)

@@ -53,8 +53,12 @@ class prox(Object):
     public margin as int
     public arr as (int, 2)
 
-    def constructor(res as int, margin as int):
+    def constructor(_res as int, _margin as int):
+        res = _res
+        margin = _margin
+
         arr = matrix(int, res, Mathf.Round(Camera.main.aspect*res))
+        
         for i in range(len(arr, 0)):
             for j in range(len(arr, 1)):
                 if (i < margin or 
@@ -65,7 +69,7 @@ class prox(Object):
                 else:
                     arr[i,j] = 0
     def node_dist():
-        return (get_pt(Vector2(0,0)) - get_pt(Vector2(0,1))).magnitude
+        return (get_pt(Vector2(margin,margin)) - get_pt(Vector2(margin,margin+1))).magnitude
 
     def get_ind(pt as Vector2):
         pt = Camera.main.WorldToScreenPoint(pt)
@@ -129,9 +133,6 @@ class path_node(Object):
         valid = true
         coll_rad = _coll_rad
         parent_valid = _parent_valid
-        #gobj = Instantiate(Resources.Load("path_node_obj"), 
-        #_pos, 
-        #Quaternion.identity)
 
     def check_pt(p as Vector2):
         colls = Physics2D.OverlapCircleAll(p, coll_rad)
@@ -146,7 +147,6 @@ class path_node(Object):
                the_prox as prox) as List:
 
         dist = the_prox.node_dist()
-
         if len(children) > 0:
             #Debug.Log("oh no we're already expanded! length is "+len(children))
             return children
@@ -169,7 +169,6 @@ class path_node(Object):
             p1 = the_prox.get_pt(Vector2(ind.x-1, ind.y))
             p2 = the_prox.get_pt(Vector2(ind.x, ind.y+1))
             p3 = the_prox.get_pt(Vector2(ind.x, ind.y-1))
-            #Debug.Log("pts: "+p+" "+ind+" "+p0+" "+p1+" "+p2+" "+p3)
             add_if_good(the_prox, 
                         p0,
                         goal, 
