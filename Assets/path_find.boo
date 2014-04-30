@@ -16,6 +16,7 @@ class priority_queue(Object):
         if sorted_list.Count == 0:
             return null
         elif len(sorted_list.Values[0]) > 1:
+            Debug.Log("going from len "+len(sorted_list.Values[0])+" to len "+len(sorted_list.Values[0][1:]))
             result = sorted_list.Values[0][0]
             sorted_list.Values[0] = sorted_list.Values[0][1:]
             return result
@@ -25,26 +26,46 @@ class priority_queue(Object):
             return result
 
 
+class prox(Object):
+    public res as int
+    public margin as int
+    public arr as (int, 2)
 
-def get_prox_ind(prox as (int, 2), 
-                 pt as Vector2):
-    pt = Camera.main.WorldToScreenPoint(pt)
-    pt.x /= Camera.main.pixelWidth
-    pt.y /= Camera.main.pixelHeight
-    
-    ret = Vector2(Mathf.Round(pt.x * len(prox, 0)), 
-                  Mathf.Round(pt.y * len(prox, 1)))
+    def constructor(res as int, margin as int):
+        arr = matrix(int, res, Mathf.Round(Camera.main.aspect*res))
+        for i in range(len(arr, 0)):
+            for j in range(len(arr, 1)):
+                if (i < margin or 
+                    i >= res-margin or 
+                    j < margin or 
+                    j >= len(arr, 1)-margin):
+                    arr[i,j] = 1
+                else:
+                    arr[i,j] = 0
 
-    return ret
-def inc_prox(prox as (int, 2),
-             pt as Vector2):
-    p = get_prox_ind(prox, pt)
-    prox[p.x, p.y] += 1
-def get_prox(prox as (int, 2),
-             pt as Vector2):
-    p = get_prox_ind(prox, pt)
-    ret = prox[p.x, p.y]
-    return ret
+    def get_ind(pt as Vector2):
+        pt = Camera.main.WorldToScreenPoint(pt)
+        pt.x /= Camera.main.pixelWidth
+        pt.y /= Camera.main.pixelHeight
+        
+        ret = Vector2(Mathf.Round(pt.x * (len(arr, 0)-margin) + margin), 
+                      Mathf.Round(pt.y * (len(arr, 1)-margin) + margin))
+
+        return ret
+    def get_pt(ind as Vector2):
+        pt = Vector2(((ind.x - margin) / (len(arr, 0) - margin)) * Camera.main.pixelWidth,
+                     ((ind.y - margin) / (len(arr, 1) - margin)) * Camera.main.pixelHeight)
+        
+        ret = Camera.main.ScreenToWorldPoint(pt)
+        ret.z = 0
+        return ret
+
+    def inc(pt as Vector2):
+        p = get_ind(pt)
+        arr[p.x, p.y] += 1
+    def at(pt as Vector2):
+        p = get_ind(pt)
+        return arr[p.x, p.y]
 
 class path_node(Object):
     public pos as Vector2
@@ -55,6 +76,7 @@ class path_node(Object):
     public coll_rad as single
     public costplus as single
     public parent_valid as bool
+    public gobj as GameObject
 
     def constructor(_pos as Vector2, 
                     _parent as path_node,
@@ -70,6 +92,9 @@ class path_node(Object):
         valid = true
         coll_rad = _coll_rad
         parent_valid = _parent_valid
+        #gobj = Instantiate(Resources.Load("path_node_obj"), 
+        #_pos, 
+        #Quaternion.identity)
 
     def check_pt(p as Vector2):
         colls = Physics2D.OverlapCircleAll(p, coll_rad)
@@ -83,7 +108,7 @@ class path_node(Object):
     def expand(n_rdm_branch as int, 
                dist as single, 
                goal as Vector2,
-               prox as (int, 2)) as List:
+               the_prox as prox) as List:
         if dist > 100:
             Debug.Log("oh no dist > 100"+dist)
             return []
@@ -101,36 +126,53 @@ class path_node(Object):
                                   coll_rad)]
 
         else:
-            p2 = pos + (goal - pos).normalized * dist
+            p = pos + (goal - pos).normalized * dist
 
-            if not(get_prox(prox, p2)) and check_pt(p2):
-                goal_node = path_node(p2,
-                                      self,
-                                      cost + dist,
-                                      (p2 - goal).magnitude,
-                                      true,
-                                      coll_rad)
+            add_if_good(the_prox, p, goal, dist, coll_rad)
 
-                children.Add(goal_node)
-
-            i = 0
-            while (i < 15) and (len(children) < n_rdm_branch):
-                p = pos + Random.insideUnitCircle.normalized * dist
-
-                if not(get_prox(prox, p)) and check_pt(p):
-                    children.Add(path_node(p,
-                                           self,
-                                           cost + dist,
-                                           (p-goal).magnitude,
-                                           true,
-                                           coll_rad))
-                i += 1
-
-        for i in range(len(children)):
-            inc_prox(prox, (children[i] cast path_node).pos)
-
-
+            ind = the_prox.get_ind(pos)
+            p0 = the_prox.get_pt(Vector2(ind.x+1, ind.y))
+            p1 = the_prox.get_pt(Vector2(ind.x-1, ind.y))
+            p2 = the_prox.get_pt(Vector2(ind.x, ind.y+1))
+            p3 = the_prox.get_pt(Vector2(ind.x, ind.y-1))
+            Debug.Log("pts: "+p+" "+ind+" "+p0+" "+p1+" "+p2+" "+p3)
+            add_if_good(the_prox, 
+                        p0,
+                        goal, 
+                        dist, 
+                        coll_rad)
+            add_if_good(the_prox, 
+                        the_prox.get_pt(Vector2(ind.x-1, ind.y)),
+                        goal, 
+                        dist, 
+                        coll_rad)
+            add_if_good(the_prox, 
+                        the_prox.get_pt(Vector2(ind.x, ind.y+1)),
+                        goal, 
+                        dist, 
+                        coll_rad)
+            add_if_good(the_prox, 
+                        the_prox.get_pt(Vector2(ind.x, ind.y-1)),
+                        goal,
+                        dist, 
+                        coll_rad)
+            
         return children
+
+    def add_if_good(the_prox as prox, 
+                    p as Vector2,
+                    goal as Vector2,
+                    dist as single,
+                    coll_rad as single):
+        if not(the_prox.at(p)) and check_pt(p):
+            children.Add(path_node(p,
+                                   self,
+                                   cost + dist,
+                                   (p-goal).magnitude,
+                                   true,
+                                   coll_rad))
+            the_prox.inc(p)
+
 
 class path_find(Object): 
     static def plan(start as Vector2, 
@@ -149,7 +191,7 @@ class path_find(Object):
             opt_plan = []
             cur_pt = start
             cur_idx = 0
-            for _ in range(200):
+            for i in range(4000):
                 breakflag = false
                 for i in range(len(prelim_plan)-1, cur_idx, -1):
                     if vis_test(cur_pt, prelim_plan[i], coll_rad):
@@ -191,23 +233,20 @@ class path_find(Object):
                          coll_rad as single):
         pq = priority_queue()
 
-        res = 50
-        prox = matrix(int, res, Mathf.Round(Camera.main.aspect*res))
-        for i in range(len(prox, 0)):
-            for j in range(len(prox, 1)):
-                prox[i,j] = 0
+        the_prox = prox(50, 5)
+
         n = path_node(start,
                       null,
                       0,
                       (start-end).magnitude,
                       false,
                       coll_rad)
-        inc_prox(prox, n.pos)
+        the_prox.inc(n.pos)
         pq.insert((start-end).magnitude,
                   n)
 
 
-        for i in range(1000):
+        for i in range(10000):
             Debug.Log("pq.Count == " + pq.sorted_list.Count)
             Debug.Log("pq.Keys[0]="+pq.sorted_list.Keys[0])
             n = pq.remove_head()
@@ -216,7 +255,7 @@ class path_find(Object):
             new_children = n.expand(n_rdm_branch,
                                     exp_dist,
                                     end, 
-                                    prox)
+                                    the_prox)
 
             if len(new_children) > 0 and (new_children[0] cast path_node).pos == end:
                 # found the goal
